@@ -3,5 +3,5 @@ This project is inspired by DirectAdmin and developed for machines which are not
 
 ###### This is an ongoing project that is actively being modified. This is developed privately, and not widely tested.
 
-# Copyright
+## Copyright
 This project is licensed with the GNU General Public License. 
