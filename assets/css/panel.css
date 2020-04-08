@@ -1,0 +1,238 @@
+@font-face {
+    font-family: "Encode Sans";
+    src: url("/assets/fonts/encode-sans.condensed.ttf");
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    background-color: #f5f5f5;
+    align-items: unset;
+}
+
+#main {
+    display: block;
+    width: 100%;
+    padding: 0;
+}
+
+#main>* {
+    opacity: 1;
+    transition: 1s;
+}
+
+#main.fadeout * {
+    opacity: 0;
+}
+
+#toasts {
+    position: fixed;
+    bottom: 1vh;
+    right: 1vw;
+    min-width: 20vw;
+    z-index: 1060;
+}
+
+#body-row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#sidebar-container {
+    min-height: 100vh;
+    background-color: #333;
+    padding: 0;
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0) !important;
+    outline: unset !important;
+}
+
+.navbar-toggler i {
+    color: white;
+    transition: 0.2s !important;
+}
+
+.navbar-toggler i:hover {
+    background-color: #045F8C;
+    border-radius: 65px;
+    padding: 12px;
+    margin: -12px;
+    outline: unset !important;
+}
+
+
+/* Sidebar sizes when expanded and expanded */
+
+.sidebar-expanded {
+    width: 230px;
+}
+
+.sidebar-collapsed {
+    width: 60px;
+}
+
+
+/* Menu item*/
+
+#sidebar-container .list-group a {
+    height: 50px;
+    color: white;
+}
+
+
+/* Submenu item*/
+
+#sidebar-container .list-group .sidebar-submenu a {
+    height: 45px;
+    padding-left: 30px;
+}
+
+.sidebar-submenu {
+    font-size: 0.9rem;
+}
+
+
+/* Separators */
+
+.sidebar-separator-title {
+    background-color: #333;
+    height: 35px;
+}
+
+.sidebar-separator {
+    background-color: #333;
+    height: 25px;
+}
+
+.logo-separator {
+    background-color: #333;
+    height: 60px;
+}
+
+
+/* Closed submenu icon */
+
+
+/*a[href='#account'] .submenu-icon::after {
+    content: " \f0da";
+    font-family: FontAwesome;
+    display: inline;
+    text-align: right;
+    padding-left: 10px;
+}*/
+
+.menu-collapsed {
+    transition: unset !important;
+}
+
+
+/* Opened submenu icon */
+
+#sidebar-container .list-group .list-group-item[aria-expanded="true"] .submenu-icon::after {
+    content: " \f0da";
+    font-family: FontAwesome;
+    display: inline;
+    text-align: right;
+    padding-left: 10px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.iconRotate {
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+}
+
+.iconRotated {
+    -moz-transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+.sidebarc {
+    transition: 1s !important;
+    position: fixed;
+    top: 56px;
+    bottom: 0;
+    overflow-y: overlay !important;
+    overflow-y: auto;
+    padding-bottom: 56px !important;
+}
+
+.mcontent {
+    margin-left: 230px;
+    transition: 1s !important;
+}
+
+.card-header {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 17px;
+}
+
+.card-text {
+    /*font-family: 'Lato', sans-serif !important;*/
+    font-family: "Encode Sans" !important;
+    /*font-weight: 600;*/
+}
+
+.card.disabled {
+    background: #d2d2d2;
+    color: #6c757d!important;
+}
+
+.tooltipRed + .tooltip > .tooltip-inner {
+    color: #f55;
+}
+
+/* .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-retroorange,
+.bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-retroorange {
+  color: #fff;
+  background: #ff9933;
+} */
+
+/* CUSTOM SWITCH ORANGE */
+
+.custom-control-input:checked~.custom-control-label.orange::before {
+    border-color: #ffbc00;
+    background-color: #ffbc00;
+}
+
+.custom-control-input:focus~.custom-control-label.orange::before {
+    box-shadow: 0 0 0 0.2rem rgba(255,188,0,.25);
+}
+
+.custom-control-input:focus:not(:checked)~.custom-control-label.orange::before {
+    border-color: #ffbc00;
+}
+
+/* CUSTOM SWITCH RED */
+
+.custom-control-input:checked~.custom-control-label.red::before {
+    border-color: #ff4040;
+    background-color: #ff4040;
+}
+
+.custom-control-input:focus~.custom-control-label.red::before {
+    box-shadow: 0 0 0 0.2rem rgba(255,64,64,.25);
+}
+
+.custom-control-input:focus:not(:checked)~.custom-control-label.red::before {
+    border-color: #ff4040;
+}
+
+.custom-control-label.center::before, .custom-control-label.center::after{
+    margin-top: 5px !important;
+}
