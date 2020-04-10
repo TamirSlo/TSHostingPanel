@@ -311,11 +311,11 @@ $(document).ready(function() {
     });
 
     $(".MenuAPacksBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
-            window.location.href = "/admin/packs";
-        }, 500);*/
+        setTimeout(function() {
+            window.location.href = "/admin/packages";
+        }, 500);
     });
 
     $(".MenuABackupsBtn").click(function(e) {

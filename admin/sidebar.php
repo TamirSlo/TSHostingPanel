@@ -26,7 +26,7 @@
                 <span class="menu-collapsed">Manage Backups</span>
             </a>
         </div>
-        <a href="/admin/packs" class="bg-dark list-group-item list-group-item-action MenuAPacksBtn text-muted" style="cursor:default !important;">
+        <a href="/admin/packages" class="bg-dark list-group-item list-group-item-action text-white MenuAPacksBtn">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fas fa-box-open fa-fw mr-3"></span>
                 <span class="menu-collapsed">Packages</span>
