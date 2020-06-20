@@ -6,7 +6,7 @@ $da = new DA();
 
 $ui = new UI();
 
-$ui->header();
+$ui->headerReseller();
 ?>
 
 <h1 class="h2 m-2">Domains</h1>
@@ -83,3 +83,7 @@ $ui->header();
         </table>
     </div>
 </div>
+
+<?php
+$ui->footer();
+?>

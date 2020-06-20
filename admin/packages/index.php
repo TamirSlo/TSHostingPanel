@@ -126,3 +126,7 @@ $ui->headerAdmin();
         </div>
     </div>
 </div>
+
+<?php
+$ui->footer();
+?>

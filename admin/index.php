@@ -76,3 +76,7 @@ $ui->headerAdmin();
 		<a class="text-info py-2">You have no new messages.</a>
     </div>
 </div>
+
+<?php
+$ui->footer();
+?>

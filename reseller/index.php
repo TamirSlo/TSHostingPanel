@@ -36,3 +36,7 @@ $ui->headerReseller();
         </div>
     </div>
 </div>
+
+<?php
+$ui->footer();
+?>

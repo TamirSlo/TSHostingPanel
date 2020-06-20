@@ -15,6 +15,7 @@
                 <span class="fas fa-caret-right submenu-icon ml-auto iconRotate" style="transition: 0.6s;"></span>
             </div>
         </a>
+
         <div id='users' class="collapse sidebar-submenu">
             <a href="/reseller/users" class="list-group-item list-group-item-action bg-dark text-white MenuRUsersBtn text-muted" style="cursor:default !important;">
                 <span class="menu-collapsed">View All</span>
@@ -98,8 +99,9 @@
         </a>
 
         <!-- Logo -->
-        <li class="list-group-item logo-separator d-flex justify-content-center">
-            <img src='/assets/images/icon-md.gif' width="30" height="30" />
+        <li class="list-group-item logo-separator">
+            <?php $this->copyright(); ?>
+            <img src='/assets/images/icon-md.gif' width="30" height="30" style="margin:auto;display: block;"/>
         </li>
     </ul>
 </div>

@@ -319,27 +319,27 @@ $(document).ready(function() {
     });
 
     $(".MenuABackupsBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/admin/backups";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuABackupsSysBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/admin/backups/system";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuABackupsSettingsBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/admin/backups/settings";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuASystemBtn").click(function(e) {

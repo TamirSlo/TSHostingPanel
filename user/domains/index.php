@@ -83,3 +83,7 @@ $ui->header();
         </table>
     </div>
 </div>
+
+<?php
+$ui->footer();
+?>

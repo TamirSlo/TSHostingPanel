@@ -490,15 +490,15 @@ class UI{
 	</div></body></html>';
     }
 
-    private function copyright($phone = true){
-        $first = "© 2019 Web Hosting Panel - Developed by ";
-        $tamir = '<a href="https://tamirslodev.tk" class="text-primary" target="_blank">TamirS</a>';
+    public function copyright($phone = true){
+        $first = "© 2020 Web Hosting Panel - Developed by ";
+        $tamir = '<a href="https://tamirslo.dev" class="text-primary" target="_blank">TamirSlo</a>';
         if(!$phone){
             echo '<span class="col-12 text-info text-center small my-3 d-block d-md-none"><hr>
-            '.$first.'<br>'.$tamir.'</span>';
+            '.$first.$tamir.'</span>';
         }else{
-            echo '<span class="text-info text-center small my-3 menu-collapsed">
-            '.$first.'<br>'.$tamir.'</span>';
+            echo '<span class="text-info text-center small my-3 menu-collapsed" style="display: inline-block;">
+            '.$first.$tamir.'</span>';
         }
         
     }

@@ -36,3 +36,7 @@ $ui->header();
         </div>
     </div>
 </div>
+
+<?php
+$ui->footer();
+?>
