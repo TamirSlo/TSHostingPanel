@@ -153,7 +153,7 @@ class DA extends Data{
 
     private function generateSalt()
     {
-        $bytes = mcrypt_create_iv(8, MCRYPT_DEV_URANDOM);
+        $bytes = random_bytes(8);
         $salt = bin2hex($bytes);
         return $salt;
     }
