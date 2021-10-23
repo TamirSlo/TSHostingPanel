@@ -308,6 +308,7 @@ class DA extends Data{
         if(!$this->admin){
             $r['success'] = false;
             $r['error'] = "You have no permissions to perform this request.";
+            return $r;
         }
 	
         if(!$user || !$pass || !$email || !$fname || !$lname){
@@ -382,6 +383,193 @@ class DA extends Data{
         
         return $r;
     
+    }
+
+    public function addReseller($user,$pass,$email,$fname,$lname,$welcomemail){
+        if(!$this->admin){
+            $r['success'] = false;
+            $r['error'] = "You have no permissions to perform this request.";
+            return $r;
+        }
+	
+        if(!$user || !$pass || !$email || !$fname || !$lname){
+            $r['success'] = false;
+            $r['error'] = "Please fill in all fields.";
+            return $r;
+        }
+	
+        if(!ctype_alpha($fname)){
+            $r['success'] = false;
+            $r['error'] = "First Name may only contain letters.";
+            return $r;
+        }
+        
+        if(!ctype_alpha($lname)){
+            $r['success'] = false;
+            $r['error'] = "Last Name may only contain letters.";
+            return $r;
+        }
+        
+        if(!$this->validateEmail($email)){
+            $r['success'] = false;
+            $r['error'] = "Email address entered is not valid.";
+            return $r;
+        }
+
+        if(!preg_match_all('/^([a-zA-Z\s\d._-]+)$/', $user)){
+            $r['success'] = false;
+            $r['error'] = "The only characters allowed in Username are:<br><b>[A-Z0-9.-_].</b>";
+            return $r;
+        }
+
+        if(!preg_match_all('/^([a-zA-Z\s\d.-_!?@$%^&*]+)$/', $pass)){
+            $r['success'] = false;
+            $r['error'] = "The only characters allowed in Password are:<br><b>[A-Z0-9.-_!?@$%^&*].</b>";
+            return $r;
+        }
+
+        $s = $this->getUserDetails($user);
+        if($s['success'] && count($s['results']) != 0){
+            $r['success'] = false;
+            $r['error'] = "Username already exists.";
+            return $r;
+        }
+
+        $t = $this->getEmailDetails($email);
+        if($t['success'] && count($t['results']) != 0){
+            $r['success'] = false;
+            $r['error'] = "Email already exists.";
+            return $r;
+        }
+
+        // All good below...
+
+        $salt = $this->generateSalt();
+        $hpass = $this->hashPass($pass,$salt);
+
+        $u = $this->db->addReseller($user,$hpass,$salt,$email,$fname,$lname);
+        $new_id = $this->db->lastInsertId();
+
+        $r['success'] = true;
+        $r['id'] = $new_id;
+
+        if($welcomemail){
+            // $mail = new Mail();
+            // $admin_name = $this->fname." ".$this->lname;
+            // $mail->welcomeAdminMessage($admin_name,$user,$pass);
+            // $mail->addRecipient($email);
+            // $mail->send();
+        }
+
+        
+        return $r;
+    
+    }
+
+    public function getAdmins(){
+        if(!$this->admin){
+            $r['success'] = false;
+            $r['error'] = "You have no permissions to perform this request.";
+            return $r;
+        }
+
+        $list = $this->db->getAdmins();
+        return $list;
+    }
+
+    public function getResellers(){
+        if(!$this->admin){
+            $r['success'] = false;
+            $r['error'] = "You have no permissions to perform this request.";
+            return $r;
+        }
+
+        $list = $this->db->getResellers();
+        return $list;
+    }
+
+    public function addResellerPackage($name,$users,$bandwidth,$diskSpace,$domains,$subDomains,$databases,$ftpAccounts){
+        if(!$this->admin){
+            $r['success'] = false;
+            $r['error'] = "You have no permissions to perform this request.";
+            return $r;
+        }
+	
+        if(!$name){
+            $r['success'] = false;
+            $r['error'] = "Please fill in all fields.";
+            return $r;
+        }
+	
+        if(!ctype_alpha(str_replace(" ","",$name))){
+            $r['success'] = false;
+            $r['error'] = "Package Name may only contain letters and spaces.";
+            return $r;
+        }
+
+        if(!is_numeric($users) || $users < 0 || $users > 999){
+            $r['success'] = false;
+            $r['error'] = "Users amount must be between 0 and 999.";
+            return $r;
+        }
+
+        if(!is_numeric($bandwidth) || $bandwidth < 0 || $bandwidth > 999999){
+            $r['success'] = false;
+            $r['error'] = "Max bandwidth must be between 0 and 999,999.";
+            return $r;
+        }
+
+        if(!is_numeric($diskSpace) || $diskSpace < 0 || $diskSpace > 999999){
+            $r['success'] = false;
+            $r['error'] = "Max Disk Space must be between 0 and 999,999.";
+            return $r;
+        }
+
+        if(!is_numeric($domains) || $domains < 0 || $domains > 999){
+            $r['success'] = false;
+            $r['error'] = "Domains amount must be between 0 and 999.";
+            return $r;
+        }
+
+        if(!is_numeric($subDomains) || $subDomains < 0 || $subDomains > 999){
+            $r['success'] = false;
+            $r['error'] = "Sub Domains amount must be between 0 and 999.";
+            return $r;
+        }
+
+        if(!is_numeric($databases) || $databases < 0 || $databases > 999){
+            $r['success'] = false;
+            $r['error'] = "Database amount must be between 0 and 999.";
+            return $r;
+        }
+
+        if(!is_numeric($ftpAccounts) || $ftpAccounts < 0 || $ftpAccounts > 999){
+            $r['success'] = false;
+            $r['error'] = "FTP Accounts amount must be between 0 and 999.";
+            return $r;
+        }
+
+        // All good below...
+        
+        $u = $this->db->addResellerPackage($name,$users,$bandwidth,$diskSpace,$domains,$subDomains,$databases,$ftpAccounts);
+        $new_id = $this->db->lastInsertId();
+
+        $r['success'] = true;
+        $r['id'] = $new_id;
+        
+        return $r;
+    
+    }
+
+    public function getResellerPackages(){
+        if(!$this->admin){
+            $r['success'] = false;
+            $r['error'] = "You have no permissions to perform this request.";
+            return $r;
+        }
+
+        $list = $this->db->getResellerPackages();
+        return $list;
     }
 }
 
@@ -491,7 +679,7 @@ class UI{
     }
 
     public function copyright($phone = true){
-        $first = "© 2020 Web Hosting Panel - Developed by ";
+        $first = "© 2021 Web Hosting Panel - Developed by ";
         $tamir = '<a href="https://tamirslo.dev" class="text-primary" target="_blank">TamirSlo</a>';
         if(!$phone){
             echo '<span class="col-12 text-info text-center small my-3 d-block d-md-none"><hr>

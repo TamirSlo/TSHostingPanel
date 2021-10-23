@@ -93,6 +93,32 @@ class DB
         return $this->checkResponse($st, "INS", $s);
     }
 
+    public function addReseller($user,$hpass,$salt,$email,$fname,$lname){
+        try {
+            $query = "INSERT INTO users (Username, Password, Salt, Email, FName, LName, Reseller) VALUES (?, ?, ?, ?, ?, ?, 1)";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $s = $st->execute(array($user,$hpass,$salt,$email,$fname,$lname));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st, "INS", $s);
+    }
+
+    public function addResellerPackage($name,$users,$bandwidth,$diskSpace,$domains,$subDomains,$databases,$ftpAccounts){
+        try {
+            $query = "INSERT INTO packages_reseller (Name, MaxUsers, MaxBandwidth, MaxDiskUsage, MaxDomains, MaxSubDomains, MaxDatabases, MaxFTPAccounts) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $s = $st->execute(array($name,$users,$bandwidth,$diskSpace,$domains,$subDomains,$databases,$ftpAccounts));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st, "INS", $s);
+    }
+
     public function getIDDetails($id){
         try {
             $query = "SELECT * FROM users WHERE UserID = ?";
@@ -126,6 +152,45 @@ class DB
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
             $st->execute(array($email));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st);
+    }
+    
+    public function getAdmins(){
+        try {
+            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.ResellerID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a WHERE Admin = 1";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $st->execute();
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st);
+    }
+    
+    public function getResellers(){
+        try {
+            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.ResellerID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a WHERE Reseller = 1";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $st->execute();
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st);
+    }
+    
+    public function getResellerPackages(){
+        try {
+            $query = "SELECT * FROM packages_reseller";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $st->execute();
         } catch (PDOException $e) {
             error_log('PDOException - ' . $e->getMessage(), 0);
         }

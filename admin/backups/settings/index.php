@@ -9,7 +9,7 @@ $ui = new UI();
 $ui->headerAdmin();
 ?>
 
-<h1 class="h2 m-2">Default Backup Settings</h1>
+<h1 class="h2 m-2">Backup Settings</h1>
 
 <div class="card my-3">
     <div class="card-header">

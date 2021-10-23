@@ -532,8 +532,6 @@ $(document).ready(function() {
             $(".modal-body").html("No action has been defined. Please refresh the page");
             $(".modal-footer").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
         }
-        
-        
     });
 
     $("button[type='submit']","#AdminModalForm").click(function(e) {
@@ -549,12 +547,121 @@ $(document).ready(function() {
             .done(function(data) {
                 data = JSON.parse(data);
                 if(data.success){
-                    //All good
+                    var temp_id = generateSuccessToast();
+                    $('#successtoast' + temp_id).toast('show');
+                    $('#successtoast' + temp_id + ' .toast-body').html("Admin was added successfully");
+                    let fName = $("#AdminModalForm #aFNameInput").val();
+                    let lName = $("#AdminModalForm #aLNameInput").val();
+                    $("#adminTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
                 }else{
-                    //Errorise
+                    var temp_id = generateErrorToast();
+                    $('#errortoast' + temp_id).toast('show');
+                    $('#errortoast' + temp_id + ' .toast-body').html(data.error);
                 }
             }).fail(function(){
+                var temp_id = generateErrorToast();
+                $('#errortoast' + temp_id).toast('show');
+                $('#errortoast' + temp_id + ' .toast-body').html("Could not connect to server. Please try again later...");
+            }).always(function(){
+                me.prop("disabled", false);
+                me.html("Save Changes");
+            })
+    });
 
+    $('#resellerModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var action = button.data('action');
+        var modal = $(this);
+    
+        if(action == "add"){
+            modal.find('.modal-title').text('Add a new Reseller');
+        }else if(action == "edit"){
+            var id = button.data('id');
+        }else{
+            modal.find('.modal-title').text('Error');
+            $(".modal-body").html("No action has been defined. Please refresh the page");
+            $(".modal-footer").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
+        }
+    });
+
+    $("button[type='submit']","#ResellerModalForm").click(function(e) {
+        e.preventDefault();
+        var form = $("#ResellerModalForm");
+        var data = $("#ResellerModalForm").serialize();
+        var me = $("button[type='submit']","#ResellerModalForm");
+
+        me.prop("disabled", true);
+        me.html('<span class="spinner-border spinner-border-sm mb-1 role="status" aria-hidden="true"></span> Checking details...');
+
+        $.post("/api/admin/users/reseller.php", data)
+            .done(function(data) {
+                data = JSON.parse(data);
+                if(data.success){
+                    var temp_id = generateSuccessToast();
+                    $('#successtoast' + temp_id).toast('show');
+                    $('#successtoast' + temp_id + ' .toast-body').html("Reseller was added successfully");
+                    let fName = $("#ResellerModalForm #rFNameInput").val();
+                    let lName = $("#ResellerModalForm #rLNameInput").val();
+                    $("#resellerTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
+                }else{
+                    var temp_id = generateErrorToast();
+                    $('#errortoast' + temp_id).toast('show');
+                    $('#errortoast' + temp_id + ' .toast-body').html(data.error);
+                }
+            }).fail(function(){
+                var temp_id = generateErrorToast();
+                $('#errortoast' + temp_id).toast('show');
+                $('#errortoast' + temp_id + ' .toast-body').html("Could not connect to server. Please try again later...");
+            }).always(function(){
+                me.prop("disabled", false);
+                me.html("Save Changes");
+            })
+    });
+
+    $('#packageModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var action = button.data('action');
+        var modal = $(this);
+
+        if(action == "add"){
+            modal.find('.modal-title').text('Add a new Package');
+        }else if(action == "edit"){
+            var id = button.data('id');
+        }else{
+            modal.find('.modal-title').text('Error');
+            $(".modal-body").html("No action has been defined. Please refresh the page");
+            $(".modal-footer").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
+        }
+    });
+
+    $("button[type='submit']","#PackageModalForm").click(function(e) {
+        e.preventDefault();
+        var form = $("#PackageModalForm");
+        var data = $("#PackageModalForm").serialize();
+        var me = $("button[type='submit']","#PackageModalForm");
+
+        me.prop("disabled", true);
+        me.html('<span class="spinner-border spinner-border-sm mb-1 role="status" aria-hidden="true"></span> Checking details...');
+
+        $.post("/api/admin/packages/reseller.php", data)
+            .done(function(data) {
+                data = JSON.parse(data);
+                if(data.success){
+                    var temp_id = generateSuccessToast();
+                    $('#successtoast' + temp_id).toast('show');
+                    $('#successtoast' + temp_id + ' .toast-body').html("Reseller Package was added successfully");
+                    //let fName = $("#PackageModalForm #pFNameInput").val();
+                    //let lName = $("#PackageModalForm #pLNameInput").val();
+                    //$("#resellerTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
+                }else{
+                    var temp_id = generateErrorToast();
+                    $('#errortoast' + temp_id).toast('show');
+                    $('#errortoast' + temp_id + ' .toast-body').html(data.error);
+                }
+            }).fail(function(){
+                var temp_id = generateErrorToast();
+                $('#errortoast' + temp_id).toast('show');
+                $('#errortoast' + temp_id + ' .toast-body').html("Could not connect to server. Please try again later...");
             }).always(function(){
                 me.prop("disabled", false);
                 me.html("Save Changes");

@@ -7,6 +7,8 @@ $da = new DA();
 $ui = new UI();
 
 $ui->headerAdmin();
+$resellerPackages = $da->getResellerPackages();
+
 ?>
 
 <h1 class="h2 m-2">Reseller Packages</h1>
@@ -21,6 +23,9 @@ $ui->headerAdmin();
         </div>
     </div>
     <div class="card-body table-responsive">
+    <?php if(count($resellerPackages['results']) == 0){ ?>
+        <span class="text-center text-info d-block" data-toggle="modal" data-target="#packageModal" data-action="add">There are no Reseller Packages within this Web Hosting Panel yet... <a class="text-primary" style="cursor:pointer;text-decoration:underline;">Add a package here</a></span>
+    <?php }else{ ?>
         <table class="table table-hover table-sm text-center" style="margin:0;">
             <tr>
                 <th>Package Name</th>
@@ -31,19 +36,22 @@ $ui->headerAdmin();
                 <th>Databases</th>
                 <th>Actions</th>
             </tr>
-            <tr>
-                <th>Basic Reseller</th>
-                <td>500MB</td>
-                <td>100MB</td>
-                <td>10</td>
-                <td>20</td>
-                <td>30</td>
-                <td>
-                    <button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button>
-                    <button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button>
-                </td>
-            </tr>
+            <?php foreach ($resellerPackages['results'] as $package) { ?>
+                <tr>
+                    <th><?php echo $package['Name']; ?></th>
+                    <td><?php echo $package['MaxBandwidth']; ?>MB</td>
+                    <td><?php echo $package['MaxDiskUsage']; ?>MB</td>
+                    <td><?php echo $package['MaxUsers']; ?></td>
+                    <td><?php echo $package['MaxDomains']; ?></td>
+                    <td><?php echo $package['MaxDatabases']; ?></td>
+                    <td>
+                        <button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button>
+                        <button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button>
+                    </td>
+                </tr>
+            <?php } ?>
         </table>
+    <?php } ?>
     </div>
 </div>
 
@@ -63,7 +71,7 @@ $ui->headerAdmin();
             <div class="modal-body">
                 <form class="form-inline" autocomplete="off" id="PackageModalForm">
                     <span class="h5 w-100">Package Details</span><br/>
-                    <input type="hidden" name="id" id="eIDInput">
+                    <input type="hidden" name="id" id="pIDInput">
                     <div class="form-row w-100">
                         <label class="col-4 col-lg-2 col-form-label" for="pNameInput">Package Name :</label>
                         <div class="col-8 col-lg-10 pr-1 pr-lg-5">
@@ -93,24 +101,24 @@ $ui->headerAdmin();
                     <div class="form-row w-100">
                         <label class="col-4 col-lg-2 col-form-label" for="pDomainsInput">Domains :</label>
                         <div class="col-8 col-lg-4">
-                            <input type="number" name="Domains" class="w-100 form-control mb-2 mr-sm-2" id="pDomainsInput" placeholder="e.g. 10" required>
+                            <input type="number" maxlength="3" name="Domains" class="w-100 form-control mb-2 mr-sm-2" id="pDomainsInput" placeholder="e.g. 10" required>
                         </div>
 
                         <label class="col-4 col-lg-2 col-form-label" for="pSubDomainsInput">Sub-Domains :</label>
                         <div class="col-8 col-lg-4 pr-lg-5">
-                            <input type="number" name="SubDomain" class="w-100 form-control mb-2 mr-sm-2" id="pSubDomainsInput" placeholder="e.g. 10" required>
+                            <input type="number" maxlength="3" name="SubDomains" class="w-100 form-control mb-2 mr-sm-2" id="pSubDomainsInput" placeholder="e.g. 10" required>
                         </div>
                     </div>
 
                     <div class="form-row w-100">
                         <label class="col-4 col-lg-2 col-form-label" for="pDatabasesInput">Databases :</label>
                         <div class="col-8 col-lg-4">
-                            <input type="number" name="Databases" class="w-100 form-control mb-2 mr-sm-2" id="pDatabasesInput" placeholder="e.g. 30" required>
+                            <input type="number" maxlength="3" name="Databases" class="w-100 form-control mb-2 mr-sm-2" id="pDatabasesInput" placeholder="e.g. 30" required>
                         </div>
 
                         <label class="col-4 col-lg-2 col-form-label" for="pFTPAccountsInput">FTP Accounts :</label>
                         <div class="col-8 col-lg-4 pr-lg-5">
-                            <input type="number" name="FTPAccounts" class="w-100 form-control mb-2 mr-sm-2" id="pFTPAccountsInput" placeholder="e.g. 20" required>
+                            <input type="number" maxlength="3" name="FTPAccounts" class="w-100 form-control mb-2 mr-sm-2" id="pFTPAccountsInput" placeholder="e.g. 20" required>
                         </div>
                     </div>
                     
