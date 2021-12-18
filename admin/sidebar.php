@@ -20,10 +20,10 @@
             <a href="/admin/users" class="list-group-item list-group-item-action bg-dark text-white MenuAUsersBtn">
                 <span class="menu-collapsed">View All</span>
             </a>
-            <a href="/admin/users/cron" class="list-group-item list-group-item-action bg-dark text-white MenuAUsersCronBtn text-muted">
+            <a href="/admin/users/cron-jobs" class="list-group-item list-group-item-action bg-dark text-white MenuAUsersCronJobsBtn">
                 <span class="menu-collapsed">Manage Cron Jobs</span>
             </a>
-            <a href="/admin/users/backups" class="list-group-item list-group-item-action bg-dark text-white MenuAUsersBackupsBtn text-muted">
+            <a href="/admin/users/backups" class="list-group-item list-group-item-action bg-dark text-white MenuAUsersBackupsBtn">
                 <span class="menu-collapsed">Manage Backups</span>
             </a>
         </div>

@@ -294,20 +294,20 @@ $(document).ready(function() {
         }, 500);
     });
 
-    $(".MenuAUsersCronBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+    $(".MenuAUsersCronJobsBtn").click(function(e) {
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
-            window.location.href = "/admin/users/cron";
-        }, 500);*/
+        setTimeout(function() {
+            window.location.href = "/admin/users/cron-jobs";
+        }, 500);
     });
 
     $(".MenuAUsersBackupsBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/admin/users/backups";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuAPacksBtn").click(function(e) {

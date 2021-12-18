@@ -38,7 +38,7 @@ $reseller = $_SESSION['Reseller'];
                 </a>
                 <div id="usersm" class="dropdown-menu text-center">
                     <a class="dropdown-item MenuAUsersBtn" href="/admin/users">View All</a>
-                    <a class="dropdown-item MenuAUsersCronBtn" href="/admin/users/cron">Manage Cron Jobs</a>
+                    <a class="dropdown-item MenuAUsersCronJobsBtn" href="/admin/users/cron-jobs">Manage Cron Jobs</a>
                     <a class="dropdown-item MenuAUsersBackupsBtn" href="/admin/users/backups">Manage Backups</a>
                 </div>
             </li>
