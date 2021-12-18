@@ -343,51 +343,51 @@ $(document).ready(function() {
     });
 
     $(".MenuASystemBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/admin/system";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuASystemSnPBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/admin/system/snp";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuASystemPHPBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/admin/system/php";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuASystemAdminBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/admin/system/admin";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuASystemLogsBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/admin/system/logs";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuASystemPanelBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/admin/system/version";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuAHelpBtn").click(function(e) {

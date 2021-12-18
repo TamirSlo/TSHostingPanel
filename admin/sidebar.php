@@ -55,7 +55,7 @@
             </a>
         </div>
 
-        <a href="#system" class="bg-dark list-group-item list-group-item-action flex-column align-items-start text-muted">
+        <a href="#system" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fab fa-raspberry-pi fa-fw mr-3"></span>
                 <span class="menu-collapsed">System</span>
@@ -64,22 +64,22 @@
         </a>
 
         <div id='system' class="collapse sidebar-submenu">
-            <a href="/admin/system" class="list-group-item list-group-item-action bg-dark text-white MenuASystemBtn text-muted">
+            <a href="/admin/system" class="list-group-item list-group-item-action bg-dark text-white MenuASystemBtn">
                 <span class="menu-collapsed">Information</span>
             </a>
-            <a href="/admin/system/snp" class="list-group-item list-group-item-action bg-dark text-white MenuASystemSnPBtn text-muted">
+            <a href="/admin/system/snp" class="list-group-item list-group-item-action bg-dark text-white MenuASystemSnPBtn">
                 <span class="menu-collapsed">Services/Processes</span>
             </a>
-            <a href="/admin/system/php" class="list-group-item list-group-item-action bg-dark text-white MenuASystemPHPBtn text-muted">
+            <a href="/admin/system/php" class="list-group-item list-group-item-action bg-dark text-white MenuASystemPHPBtn">
                 <span class="menu-collapsed">PHP Settings</span>
             </a>
-            <a href="/admin/system/admin" class="list-group-item list-group-item-action bg-dark text-white MenuASystemAdminBtn text-muted">
+            <a href="/admin/system/admin" class="list-group-item list-group-item-action bg-dark text-white MenuASystemAdminBtn">
                 <span class="menu-collapsed">Admin Settings</span>
             </a>
-            <a href="/admin/system/logs" class="list-group-item list-group-item-action bg-dark text-white MenuASystemLogsBtn text-muted">
+            <a href="/admin/system/logs" class="list-group-item list-group-item-action bg-dark text-white MenuASystemLogsBtn">
                 <span class="menu-collapsed">View Logs</span>
             </a>
-            <a href="/admin/system/version" class="list-group-item list-group-item-action bg-dark text-white MenuASystemPanelBtn text-muted">
+            <a href="/admin/system/version" class="list-group-item list-group-item-action bg-dark text-white MenuASystemPanelBtn">
                 <span class="menu-collapsed">Panel Version</span>
             </a>
         </div>
