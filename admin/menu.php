@@ -75,9 +75,9 @@ $reseller = $_SESSION['Reseller'];
                     Account
                 </a>
                 <div id="accountm" class="dropdown-menu text-center">
-                    <a class="dropdown-item MenuSettingsBtn" href="/user/settings">Settings</a>
-                    <a class="dropdown-item MenuPassBtn" href="/user/pass">Password</a>
-                    <a class="dropdown-item MenuMessagesBtn" href="/user/messages">Messages <span
+                    <a class="dropdown-item MenuSettingsBtn" href="/admin/account">Settings</a>
+                    <a class="dropdown-item MenuPassBtn" href="/admin/account/password">Password</a>
+                    <a class="dropdown-item MenuMessagesBtn" href="/admin/account/messages">Messages <span
                             class="badge badge-pill badge-primary ml-2">5</span></a>
                 </div>
             </li>

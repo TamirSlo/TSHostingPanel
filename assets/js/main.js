@@ -179,27 +179,27 @@ $(document).ready(function() {
     });
 
     $(".MenuSettingsBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
-            window.location.href = "/user/help";
-        }, 500);*/
+        setTimeout(function() {
+            window.location.href = "/admin/account";
+        }, 500);
     });
 
     $(".MenuPassBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
-            window.location.href = "/user/help";
-        }, 500);*/
+        setTimeout(function() {
+            window.location.href = "/admin/account/password";
+        }, 500);
     });
 
     $(".MenuMessagesBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
-            window.location.href = "/user/help";
-        }, 500);*/
+        setTimeout(function() {
+            window.location.href = "/admin/account/messages";
+        }, 500);
     });
 
     // ========================================= S I D E B A R   R E S E L L E R   L I N K S =======================
@@ -213,59 +213,59 @@ $(document).ready(function() {
     });
 
     $(".MenuRUsersBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/reseller/users";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuRUsersMessagesBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/reseller/users/messages";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuRUsersBackupsBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/reseller/users/backups";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuRPacksBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
-            window.location.href = "/reseller/packs";
-        }, 500);*/
+        setTimeout(function() {
+            window.location.href = "/reseller/packages";
+        }, 500);
     });
 
     $(".MenuRSystemBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/reseller/system";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuRSystemLogsBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/reseller/system/logs";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuRSystemSettingsBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
             window.location.href = "/reseller/system/settings";
-        }, 500);*/
+        }, 500);
     });
 
     $(".MenuRHelpBtn").click(function(e) {
@@ -391,11 +391,11 @@ $(document).ready(function() {
     });
 
     $(".MenuAHelpBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
-            window.location.href = "/reseller/help";
-        }, 500);*/
+        setTimeout(function() {
+            window.location.href = "/admin/help";
+        }, 500);
     });
 
     $("a[href='#users']").click(function(e) {

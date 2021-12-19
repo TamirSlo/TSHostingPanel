@@ -86,7 +86,7 @@
 
         <li class="list-group-item sidebar-separator"></li>
         
-        <a href="#account" class="bg-dark list-group-item list-group-item-action flex-column align-items-start text-muted" style="cursor:default !important;">
+        <a href="#account" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fas fa-user fa-fw mr-3"></span>
                 <span class="menu-collapsed">Account</span>
@@ -95,18 +95,18 @@
         </a>
 
         <div id='account' class="collapse sidebar-submenu">
-            <a href="/user/settings" class="list-group-item list-group-item-action bg-dark text-white MenuSettingsBtn text-muted" style="cursor:default !important;">
+            <a href="/admin/account" class="list-group-item list-group-item-action bg-dark text-white MenuSettingsBtn">
                 <span class="menu-collapsed">Settings</span>
             </a>
-            <a href="/user/pass" class="list-group-item list-group-item-action bg-dark text-white MenuPassBtn text-muted" style="cursor:default !important;">
+            <a href="/admin/account/password" class="list-group-item list-group-item-action bg-dark text-white MenuPassBtn">
                 <span class="menu-collapsed">Password</span>
             </a>
-            <a href="/user/messages" class="list-group-item list-group-item-action bg-dark text-white MenuMessagesBtn text-muted" style="cursor:default !important;">
+            <a href="/admin/account/messages" class="list-group-item list-group-item-action bg-dark text-white MenuMessagesBtn">
                 <span class="menu-collapsed">Messages <span class="badge badge-pill badge-primary badge-secondary ml-2">5</span></span>
             </a>
         </div>
 
-        <a href="/admin/help" class="bg-dark list-group-item list-group-item-action MenuAHelpBtn text-muted" style="cursor:default !important;">
+        <a href="/admin/help" class="bg-dark list-group-item list-group-item-action MenuAHelpBtn">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fas fa-question fa-fw mr-3"></span>
                 <span class="menu-collapsed">Help</span>

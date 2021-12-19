@@ -8,7 +8,7 @@
             </div>
         </a>
 
-        <a href="#users" class="bg-dark list-group-item list-group-item-action flex-column align-items-start text-muted" style="cursor:default !important;">
+        <a href="#users" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fas fa-users-cog fa-fw mr-3"></span>
                 <span class="menu-collapsed">Users</span>
@@ -17,25 +17,25 @@
         </a>
 
         <div id='users' class="collapse sidebar-submenu">
-            <a href="/reseller/users" class="list-group-item list-group-item-action bg-dark text-white MenuRUsersBtn text-muted" style="cursor:default !important;">
+            <a href="/reseller/users" class="list-group-item list-group-item-action bg-dark text-white MenuRUsersBtn">
                 <span class="menu-collapsed">View All</span>
             </a>
-            <a href="/reseller/users/messages" class="list-group-item list-group-item-action bg-dark text-white MenuRUsersMessagesBtn text-muted" style="cursor:default !important;">
+            <a href="/reseller/users/messages" class="list-group-item list-group-item-action bg-dark text-white MenuRUsersMessagesBtn">
                 <span class="menu-collapsed">User Messages</span>
             </a>
-            <a href="/reseller/users/backups" class="list-group-item list-group-item-action bg-dark text-white MenuRUsersBackupsBtn text-muted" style="cursor:default !important;">
+            <a href="/reseller/users/backups" class="list-group-item list-group-item-action bg-dark text-white MenuRUsersBackupsBtn">
                 <span class="menu-collapsed">Manage Backups</span>
             </a>
         </div>
 
-        <a href="/reseller/packs" class="bg-dark list-group-item list-group-item-action MenuRPacksBtn text-muted" style="cursor:default !important;">
+        <a href="/reseller/packages" class="bg-dark list-group-item list-group-item-action MenuRPacksBtn">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fas fa-box-open fa-fw mr-3"></span>
                 <span class="menu-collapsed">Packages</span>
             </div>
         </a>
 
-        <a href="#system" class="bg-dark list-group-item list-group-item-action flex-column align-items-start text-muted" style="cursor:default !important;">
+        <a href="#system" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fab fa-raspberry-pi fa-fw mr-3"></span>
                 <span class="menu-collapsed">System</span>
@@ -43,13 +43,13 @@
             </div>
         </a>
         <div id='system' class="collapse sidebar-submenu">
-            <a href="/reseller/system" class="list-group-item list-group-item-action bg-dark text-white MenuRSystemBtn text-muted" style="cursor:default !important;">
+            <a href="/reseller/system" class="list-group-item list-group-item-action bg-dark text-white MenuRSystemBtn">
                 <span class="menu-collapsed">Information</span>
             </a>
-            <a href="/reseller/system/logs" class="list-group-item list-group-item-action bg-dark text-white MenuRSystemLogsBtn text-muted" style="cursor:default !important;">
+            <a href="/reseller/system/logs" class="list-group-item list-group-item-action bg-dark text-white MenuRSystemLogsBtn">
                 <span class="menu-collapsed">View Logs</span>
             </a>
-            <a href="/reseller/system/settings" class="list-group-item list-group-item-action bg-dark text-white MenuRSystemSettingsBtn text-muted" style="cursor:default !important;">
+            <a href="/reseller/system/settings" class="list-group-item list-group-item-action bg-dark text-white MenuRSystemSettingsBtn">
                 <span class="menu-collapsed">Reseller Settings</span>
             </a>
         </div>

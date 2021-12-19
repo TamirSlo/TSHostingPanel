@@ -42,15 +42,13 @@ $reseller = $_SESSION['Reseller'];
                     Users
                 </a>
                 <div id="usersm" class="dropdown-menu text-center">
-                    <a class="dropdown-item MenuRUsersBtn" href="/reseller">View All</a>
-                    <a class="dropdown-item MenuRUsersMessagesBtn" href="/reseller/messages">User Messages</a>
-                    <a class="dropdown-item MenuRUsersBackupsBtn" href="/reseller/backups">Manage Backups</a>
+                    <a class="dropdown-item MenuRUsersBtn" href="/reseller/users">View All</a>
+                    <a class="dropdown-item MenuRUsersMessagesBtn" href="/reseller/users/messages">User Messages</a>
+                    <a class="dropdown-item MenuRUsersBackupsBtn" href="/reseller/users/backups">Manage Backups</a>
                 </div>
             </li>
 
-            <a class="nav-link d-sm-block d-md-none MenuRPacksBtn" href="/reseller/packs">Packages</a>
-
-            
+            <a class="nav-link d-sm-block d-md-none MenuRPacksBtn" href="/reseller/packages">Packages</a>
 
             <li class="nav-item dropdown d-sm-block d-md-none">
                 <a class="nav-link dropdown-toggle" href="#systemm">
