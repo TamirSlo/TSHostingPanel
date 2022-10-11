@@ -268,12 +268,36 @@ $(document).ready(function() {
         }, 500);
     });
 
-    $(".MenuRHelpBtn").click(function(e) {
-        //$('#main').addClass('fadeout');
+    $(".MenuRAccountSettingsBtn").click(function(e) {
+        $('#main').addClass('fadeout');
         e.preventDefault();
-        /*setTimeout(function() {
+        setTimeout(function() {
+            window.location.href = "/reseller/account/settings";
+        }, 500);
+    });
+
+    $(".MenuRPassBtn").click(function(e) {
+        $('#main').addClass('fadeout');
+        e.preventDefault();
+        setTimeout(function() {
+            window.location.href = "/reseller/account/password";
+        }, 500);
+    });
+
+    $(".MenuRMessagesBtn").click(function(e) {
+        $('#main').addClass('fadeout');
+        e.preventDefault();
+        setTimeout(function() {
+            window.location.href = "/reseller/account/messages";
+        }, 500);
+    });
+
+    $(".MenuRHelpBtn").click(function(e) {
+        $('#main').addClass('fadeout');
+        e.preventDefault();
+        setTimeout(function() {
             window.location.href = "/reseller/help";
-        }, 500);*/
+        }, 500);
     });
 
     // ================================================ S I D E B A R   A D M I N   L I N K S =======================
