@@ -546,17 +546,52 @@ $(document).ready(function() {
         var button = $(event.relatedTarget);
         var action = button.data('action');
         var modal = $(this);
-
+        
         if(action == "add"){
             modal.find('.modal-title').text('Add a new Admin');
         }else if(action == "edit"){
             var id = button.data('id');
+            $.get("/api/admin/users/admin.php?id="+id, function(data, status){
+                var data = JSON.parse(data);
+                if(data.success){
+                    modal.find('.modal-title').text('Edit Admin');
+                    modal.find('#aIdInput').val(data.results[0].UserID);
+                    modal.find('#aFNameInput').val(data.results[0].FName);
+                    modal.find('#aLNameInput').val(data.results[0].LName);
+                    modal.find('#aEmailInput').val(data.results[0].Email);
+                    modal.find('#aUserInput').val(data.results[0].Username);
+                }else{
+                    var temp_id = generateErrorToast();
+                    $('#errortoast'+temp_id).toast('show');
+                    $('#errortoast'+temp_id+' .toast-body').html("Error: "+data.error);
+                }
+            }).fail(function(){
+                var temp_id = generateErrorToast();
+                $('#errortoast'+temp_id).toast('show');
+                $('#errortoast'+temp_id+' .toast-body').html("Error: Could not connect to server. Please try again later...");
+            });
         }else{
             modal.find('.modal-title').text('Error');
             $(".modal-body").html("No action has been defined. Please refresh the page");
             $(".modal-footer").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
         }
     });
+
+    $('#adminModal').on('hidden.bs.modal', function (event) {
+        var modal = $(this);
+        var form = modal.find('form');
+        form[0].reset();
+    });
+
+    $('.deleteAdmin').click(function(e){
+        e.preventDefault();
+        var id = $(this).data('id');
+        var temp_id = generateConfirmToast();
+        $('#confirmtoast'+temp_id).toast('show');
+        $('#confirmtoast'+temp_id+' .toast-body').html("Are you sure you want to delete this admin?");
+        $('#confirmtoast'+temp_id+' .toast-footer').html('<button type="button" class="btn btn-secondary btn-sm" data-dismiss="toast">Cancel</button><button type="button" class="btn btn-danger btn-sm" data-dismiss="toast" onclick="deleteAdmin('+id+')">Delete</button>');
+    });
+
 
     $("button[type='submit']","#AdminModalForm").click(function(e) {
         e.preventDefault();
@@ -573,10 +608,13 @@ $(document).ready(function() {
                 if(data.success){
                     var temp_id = generateSuccessToast();
                     $('#successtoast' + temp_id).toast('show');
-                    $('#successtoast' + temp_id + ' .toast-body').html("Admin was added successfully");
+                    $('#successtoast' + temp_id + ' .toast-body').html(data.message);
                     let fName = $("#AdminModalForm #aFNameInput").val();
                     let lName = $("#AdminModalForm #aLNameInput").val();
-                    $("#adminTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
+                    if(!data.message) $("#adminTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
+                    $("#admin"+data.id).html('<th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td>');
+                    $('#adminModal').modal('hide');
+                    form[0].reset();
                 }else{
                     var temp_id = generateErrorToast();
                     $('#errortoast' + temp_id).toast('show');
@@ -627,6 +665,8 @@ $(document).ready(function() {
                     let fName = $("#ResellerModalForm #rFNameInput").val();
                     let lName = $("#ResellerModalForm #rLNameInput").val();
                     $("#resellerTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
+                    $('#resellerModal').modal('hide');
+                    $("#ResellerModalForm")[0].reset();
                 }else{
                     var temp_id = generateErrorToast();
                     $('#errortoast' + temp_id).toast('show');
@@ -707,4 +747,24 @@ function getCookie(cname) {
         }
     }
     return "";
+}
+
+function deleteAdmin(id){
+    $.post("/api/admin/users/admin.php", {delete: id}, function(data){
+        var data = JSON.parse(data);
+        if(data.success){
+            var temp_id = generateSuccessToast();
+            $('#successtoast'+temp_id).toast('show');
+            $('#successtoast'+temp_id+' .toast-body').html("Admin deleted successfully");
+            $('#admin'+id).remove();
+        }else{
+            var temp_id = generateErrorToast();
+            $('#errortoast'+temp_id).toast('show');
+            $('#errortoast'+temp_id+' .toast-body').html("Error: "+data.error);
+        }
+    }).fail(function(){
+        var temp_id = generateErrorToast();
+        $('#errortoast'+temp_id).toast('show');
+        $('#errortoast'+temp_id+' .toast-body').html("Error: Could not connect to server. Please try again later...");
+    });
 }

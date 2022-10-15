@@ -10,8 +10,9 @@ if(isset($_POST['Username'])){
 	$email = $_POST['Email'];
 	$fname = $_POST['FName'];
 	$lname = $_POST['LName'];
+	$package = $_POST['Package'];
 	$welcomemail = false;
-	$r = $da->addReseller($user,$pass,$email,$fname,$lname,$welcomemail);
+	$r = $da->addReseller($user,$pass,$email,$fname,$lname,$package,$welcomemail);
 	if($r['success']){
 		echo json_encode($r);
 	}else{

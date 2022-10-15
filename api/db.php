@@ -2,7 +2,7 @@
 
 class DB
 {
-    private $db = "";
+    private $db = null;
 
     private $host = "";
     private $username = "";
@@ -48,7 +48,7 @@ class DB
             }
         }
 
-        if ($sql == "INS"){
+        if ($sql == "INS" || $sql == "UPD" || $sql == "DEL"){
             if($s){
                 return array("success" => true);
             }else{
@@ -93,17 +93,43 @@ class DB
         return $this->checkResponse($st, "INS", $s);
     }
 
-    public function addReseller($user,$hpass,$salt,$email,$fname,$lname){
+    public function editUser($id,$user,$email,$fname,$lname){
         try {
-            $query = "INSERT INTO users (Username, Password, Salt, Email, FName, LName, Reseller) VALUES (?, ?, ?, ?, ?, ?, 1)";
+            $query = "UPDATE users SET Username = ?, Email = ?, FName = ?, LName = ? WHERE UserID = ?";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
-            $s = $st->execute(array($user,$hpass,$salt,$email,$fname,$lname));
+            $s = $st->execute(array($user,$email,$fname,$lname,$id));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st, "UPD", $s);
+    }
+
+    public function addReseller($user,$hpass,$salt,$email,$fname,$lname,$package){
+        try {
+            $query = "INSERT INTO users (Username, Password, Salt, Email, FName, LName, Reseller, ResellerPackageID) VALUES (?, ?, ?, ?, ?, ?, 1, ?)";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $s = $st->execute(array($user,$hpass,$salt,$email,$fname,$lname,$package));
         } catch (PDOException $e) {
             error_log('PDOException - ' . $e->getMessage(), 0);
         }
         return $this->checkResponse($st, "INS", $s);
+    }
+
+    public function changeUserPass($id,$hpass,$salt){
+        try {
+            $query = "UPDATE users SET Password = ?, Salt = ? WHERE UserID = ?";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $s = $st->execute(array($hpass,$salt,$id));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st, "UPD", $s);
     }
 
     public function addResellerPackage($name,$users,$bandwidth,$diskSpace,$domains,$subDomains,$databases,$ftpAccounts){
@@ -119,7 +145,7 @@ class DB
         return $this->checkResponse($st, "INS", $s);
     }
 
-    public function getIDDetails($id){
+    public function getUserByID($id){
         try {
             $query = "SELECT * FROM users WHERE UserID = ?";
             $st = $this->db->prepare($query);
@@ -130,6 +156,19 @@ class DB
             error_log('PDOException - ' . $e->getMessage(), 0);
         }
         return $this->checkResponse($st);
+    }
+
+    public function deleteUserByID($id){
+        try {
+            $query = "DELETE FROM users WHERE UserID = ?";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $s = $st->execute(array($id));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st, "DEL", $s);
     }
 
     public function getUserDetails($user){
@@ -160,7 +199,7 @@ class DB
     
     public function getAdmins(){
         try {
-            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.ResellerID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a WHERE Admin = 1";
+            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.ResellerID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a WHERE Admin = 1 ORDER BY a.UserID ASC";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
@@ -173,7 +212,7 @@ class DB
     
     public function getResellers(){
         try {
-            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.ResellerID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a WHERE Reseller = 1";
+            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.ResellerID, a.ResellerPackageID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount, c.MaxUsers, c.MaxDiskUsage FROM users a INNER JOIN packages_reseller c WHERE a.Reseller = 1 AND a.ResellerPackageID=c.ResellerPackageID ORDER BY a.UserID ASC;";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
@@ -195,6 +234,32 @@ class DB
             error_log('PDOException - ' . $e->getMessage(), 0);
         }
         return $this->checkResponse($st);
+    }
+
+    public function getResellerPackageByID($id){
+        try {
+            $query = "SELECT * FROM packages_reseller WHERE PackageID = ?";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $st->execute(array($id));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st);
+    }
+
+    public function deleteResellerPackageById($id){
+        try {
+            $query = "DELETE FROM packages_reseller WHERE ResellerPackageID = ?";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $s = $st->execute(array($id));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st, "DEL", $s);
     }
 
     public function lastInsertId(){

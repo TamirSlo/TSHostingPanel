@@ -274,11 +274,35 @@ class DA extends Data{
         return array("success"=>true);
     }
 
-    public function getIDDetails($id){
+    public function getUserByID($id){
         $v = $this->vID($id);
-        if(!$v) return $v;
+        if(!$v["valid"]) return $v;
 
-        $s = $this->db->getIDDetails($id);
+        $s = $this->db->getUserByID($id);
+        unset($s["results"][0]["Password"]);
+        unset($s["results"][0]["Salt"]);
+        return $s;
+    }
+
+    public function deleteUserByID($id){
+        $v = $this->vID($id);
+        if(!$v["valid"]) return $v;
+
+        if ($this->id == $id) {
+            return array(
+                "success"=>false,
+                "error"=>"You cannot delete yourself."
+            );
+        }
+
+        if(!$this->admin){
+            return array(
+                "success"=>false,
+                "error"=>"You do not have permission to delete users."
+            );
+        }
+
+        $s = $this->db->deleteUserByID($id);
         return $s;
     }
 
@@ -371,6 +395,7 @@ class DA extends Data{
 
         $r['success'] = true;
         $r['id'] = $new_id;
+        $r['message'] = "Admin added successfully.";
 
         if($welcomemail){
             // $mail = new Mail();
@@ -385,14 +410,91 @@ class DA extends Data{
     
     }
 
-    public function addReseller($user,$pass,$email,$fname,$lname,$welcomemail){
+    public function editUser($id,$user,$pass,$email,$fname,$lname){
+        if(!$this->admin){
+            $r['success'] = false;
+            $r['error'] = "You have no permissions to perform this request.";
+            return $r;
+        }
+    
+        if(!$user || !$email || !$fname || !$lname){
+            $r['success'] = false;
+            $r['error'] = "Please fill in all fields.";
+            return $r;
+        }
+    
+        if(!ctype_alpha($fname)){
+            $r['success'] = false;
+            $r['error'] = "First Name may only contain letters.";
+            return $r;
+        }
+        
+        if(!ctype_alpha($lname)){
+            $r['success'] = false;
+            $r['error'] = "Last Name may only contain letters.";
+            return $r;
+        }
+        
+        if(!$this->validateEmail($email)){
+            $r['success'] = false;
+            $r['error'] = "Email address entered is not valid.";
+            return $r;
+        }
+
+        if(!preg_match_all('/^([a-zA-Z\s\d._-]+)$/', $user)){
+            $r['success'] = false;
+            $r['error'] = "The only characters allowed in Username are:<br><b>[A-Z0-9.-_].</b>";
+            return $r;
+        }
+
+        if(!preg_match_all('/^([a-zA-Z\s\d.-_!?@$%^&*]+)$/', $pass) && $pass != ""){
+            $r['success'] = false;
+            $r['error'] = "The only characters allowed in Password are:<br><b>[A-Z0-9.-_!?@$%^&*].</b>";
+            return $r;
+        }
+
+        $s = $this->getUserDetails($user);
+        if($s['success'] && count($s['results']) != 0 && $s['results'][0]['UserID'] != $id){
+            $r['success'] = false;
+            $r['error'] = "Username already exists.";
+            return $r;
+        }
+
+        $t = $this->getEmailDetails($email);
+        if($t['success'] && count($t['results']) != 0 && $s['results'][0]['UserID'] != $id){
+            $r['success'] = false;
+            $r['error'] = "Email already exists.";
+            return $r;
+        }
+
+        // All good below...
+
+        if($pass != ""){
+            $salt = $this->generateSalt();
+            $hpass = $this->hashPass($pass,$salt);
+
+            $this->db->editUser($id,$user,$email,$fname,$lname);
+            $this->db->changeUserPass($id,$hpass,$salt);
+        }else{
+            $this->db->editUser($id,$user,$email,$fname,$lname);
+        }
+
+        $r['success'] = true;
+        $r['id'] = $id;
+        $r['message'] = "User details updated successfully.";
+
+        return $r;
+
+    }
+
+    public function addReseller($user,$pass,$email,$fname,$lname,$package,$welcomemail){
         if(!$this->admin){
             $r['success'] = false;
             $r['error'] = "You have no permissions to perform this request.";
             return $r;
         }
 	
-        if(!$user || !$pass || !$email || !$fname || !$lname){
+        if(!$user || !$pass || !$email || !$fname || !$lname || !$package){
             $r['success'] = false;
             $r['error'] = "Please fill in all fields.";
             return $r;
@@ -428,6 +530,12 @@ class DA extends Data{
             return $r;
         }
 
+        if(!is_numeric($package)){
+            $r['success'] = false;
+            $r['error'] = "Invalid package selected.";
+            return $r;
+        }
+
         $s = $this->getUserDetails($user);
         if($s['success'] && count($s['results']) != 0){
             $r['success'] = false;
@@ -442,12 +550,20 @@ class DA extends Data{
             return $r;
         }
 
+        $u = $this->getResellerPackageByID($package);
+        if(!$u['success'] || count($u['results']) == 0){
+            $r['success'] = false;
+            $r['error'] = "Invalid Reseller Package.";
+            return $r;
+        }
+        
+
         // All good below...
 
         $salt = $this->generateSalt();
         $hpass = $this->hashPass($pass,$salt);
 
-        $u = $this->db->addReseller($user,$hpass,$salt,$email,$fname,$lname);
+        $u = $this->db->addReseller($user,$hpass,$salt,$email,$fname,$lname,$package);
         $new_id = $this->db->lastInsertId();
 
         $r['success'] = true;
@@ -571,6 +687,24 @@ class DA extends Data{
         $list = $this->db->getResellerPackages();
         return $list;
     }
+
+    public function getResellerPackageByID($id){
+        if(!$this->admin){
+            $r['success'] = false;
+            $r['error'] = "You have no permissions to perform this request.";
+            return $r;
+        }
+
+        // check if id is valid
+        if(!is_numeric($id) || $id < 1){
+            $r['success'] = false;
+            $r['error'] = "Invalid Reseller Package ID.";
+            return $r;
+        }
+
+        $list = $this->db->getResellerPackageByID($id);
+        return $list;
+    }
 }
 
 
@@ -679,7 +813,8 @@ class UI{
     }
 
     public function copyright($phone = true){
-        $first = "© 2021 Web Hosting Panel - Developed by ";
+        $year = date('Y');
+        $first = "© 2021 - " . $year ." Web Hosting Panel - Developed by ";
         $tamir = '<a href="https://tamirslo.dev" class="text-primary" target="_blank">TamirSlo</a>';
         if(!$phone){
             echo '<span class="col-12 text-info text-center small my-3 d-block d-md-none"><hr>
@@ -704,13 +839,16 @@ class UI{
 
 // ======================= D A T A    H A N D L I N G    C L A S S ======================= \\
 
-class Data{
+class Data {
 
     // DATA VERIFICATION METHODS
     public function vID($id){
         if(!is_numeric($id)){
-            $r['success'] = false;
+            $r['valid'] = false;
             $r['error'] = "User ID may only contain numbers.";
+            return $r;
+        }else{
+            $r['valid'] = true;
             return $r;
         }
     }

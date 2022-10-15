@@ -18,11 +18,10 @@ $resellerPackages = $da->getResellerPackages();
     <div class="card-header">
         <h4 class="float-left align-middle mt-1 m-0">Admin List</h4>
         <div class="float-right d-none d-md-block">
-            <button class="btn btn-info mx-1" disabled><span class="fas fa-redo-alt mr-2"></span>Refresh</button>
+            <small class="text-muted mr-2 mt-2">Showing <?php echo count($adminList['results']); ?> admins</small>
             <button class="btn btn-success mx-1" data-toggle="modal" data-target="#adminModal" data-action="add"><span class="fas fa-plus mr-2"></span>Add Admin</button>
         </div>
         <div class="float-right d-block d-md-none"><br>
-            <button class="btn btn-info mx-1" disabled><span class="fas fa-redo-alt mr-2"></span>Refresh</button>
             <button class="btn btn-success mx-1" data-toggle="modal" data-target="#adminModal" data-action="add"><span class="fas fa-plus mr-2"></span>Add Admin</button>
         </div>
     </div>
@@ -39,15 +38,15 @@ $resellerPackages = $da->getResellerPackages();
             <?php
                 foreach ($adminList['results'] as $admin) {
                     ?>
-                    <tr>
+                    <tr id="admin<?php echo $admin['UserID']; ?>">
                         <th><?php echo $admin['UserID']; ?></th>
                         <td><?php echo $admin['FName']; ?></td>
                         <td><?php echo $admin['LName']; ?></td>
                         <td><div class="show-tooltip" title="<?php echo $admin['UserCount']; ?>/&infin;"><?php echo $admin['UserCount']; ?></div></td>
                         <td><div class="show-tooltip" title="0.00MB/3.60GB">0.00MB</div></td>
                         <td>
-                            <button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button>
-                            <button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button>
+                            <button class="btn btn-info px-1 py-0 mx-1" data-toggle="modal" data-target="#adminModal" data-action="edit" data-id="<?php echo $admin['UserID']; ?>">Edit</button>
+                            <button class="btn btn-danger px-1 py-0 mx-1 deleteAdmin" data-id="<?php echo $admin['UserID']; ?>" <?php if($da->id == $admin['UserID']) echo "disabled"; ?>>Delete</button>
                         </td>
                     </tr>
                     <?php
@@ -61,12 +60,10 @@ $resellerPackages = $da->getResellerPackages();
     <div class="card-header">
         <h4 class="float-left align-middle mt-1 m-0">Reseller List</h4>
         <div class="float-right d-none d-md-block">
-            <small class="text-muted mr-2 mt-2">Showing results 1-10 (11)</small>
-            <button class="btn btn-info mx-1" disabled><span class="fas fa-redo-alt mr-2"></span>Refresh</button>
+            <small class="text-muted mr-2 mt-2">Showing <?php echo count($resellerList['results']); ?> resellers</small>
             <button class="btn btn-success mx-1" data-toggle="modal" data-target="#resellerModal" data-action="add"><span class="fas fa-plus mr-2"></span>Add Reseller</button>
         </div>
         <div class="float-right d-block d-md-none"><br>
-            <button class="btn btn-info mx-1" disabled><span class="fas fa-redo-alt mr-2"></span>Refresh</button>
             <button class="btn btn-success mx-1" data-toggle="modal" data-target="#resellerModal" data-action="add"><span class="fas fa-plus mr-2"></span>Add Reseller</button>
         </div>
     </div>
@@ -87,8 +84,8 @@ $resellerPackages = $da->getResellerPackages();
                         <th><?php echo $reseller['UserID']; ?></th>
                         <td><?php echo $reseller['FName']; ?></td>
                         <td><?php echo $reseller['LName']; ?></td>
-                        <td><div class="show-tooltip" title="<?php echo $reseller['UserCount']; ?>/&infin;"><?php echo $reseller['UserCount']; ?></div></td>
-                        <td><div class="show-tooltip" title="0.00MB/3.60GB">0.00MB</div></td>
+                        <td><div class="show-tooltip <?php if($reseller['MaxUsers'] != 0 && $reseller['MaxUsers'] == $reseller['UserCount']) echo 'tooltipRed' ; ?>" title="<?php echo $reseller['UserCount'] . '/' . ($reseller['MaxUsers'] == 0 ? '&infin;' : $reseller['MaxUsers']); ?>"><?php echo $reseller['UserCount']; ?></div></td>
+                        <td><div class="show-tooltip <?php if($reseller['MaxDiskUsage'] != 0 && $reseller['MaxDiskUsage'] == -1/** TODO: get actual disk usage for user */) echo 'tooltipRed' ; ?>" title="<?php echo '-1MB'/**TODO Same as before in line <-- */ . '/' . ($reseller['MaxDiskUsage'] == 0 ? '&infin;' : '-1' /**TODO Same as before in line <-- */) . 'MB' ; ?>">-1MB<?php /**TODO Same as before in line <-- */ ?></div></td>
                         <td>
                             <button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button>
                             <button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button>
@@ -97,28 +94,6 @@ $resellerPackages = $da->getResellerPackages();
                     <?php
                 }
             ?>
-            <tr>
-                <th>2</th>
-                <td>Tim</td>
-                <td>Blackwater</td>
-                <td><div class="show-tooltip tooltipRed" title="2/2">2</div></td>
-                <td><div class="show-tooltip" title="7.01MB/50.0MB">7.01MB</div></td>
-                <td>
-                    <button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button>
-                    <button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button>
-                </td>
-            </tr>
-            <tr>
-                <th>3</th>
-                <td>Daniel</td>
-                <td>Tzafrir</td>
-                <td><div class="show-tooltip" title="4/15">4</div></td>
-                <td><div class="show-tooltip" title="2.57MB/100.00MB">2.57MB</div></td>
-                <td>
-                    <button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button>
-                    <button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button>
-                </td>
-            </tr>
         </table>
     </div>
 </div>

@@ -56,7 +56,7 @@
 
         <li class="list-group-item sidebar-separator"></li>
 
-        <a href="#account" class="bg-dark list-group-item list-group-item-action flex-column align-items-start" style="cursor:default !important;">
+        <a href="#account" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fas fa-user fa-fw mr-3"></span>
                 <span class="menu-collapsed">Account</span>
@@ -65,18 +65,18 @@
         </a>
 
         <div id='account' class="collapse sidebar-submenu">
-            <a href="/reseller/account/settings" class="list-group-item list-group-item-action bg-dark text-white MenuRAccountSettingsBtn" style="cursor:default !important;">
+            <a href="/reseller/account/settings" class="list-group-item list-group-item-action bg-dark text-white MenuRAccountSettingsBtn">
                 <span class="menu-collapsed">Settings</span>
             </a>
-            <a href="/reseller/pass" class="list-group-item list-group-item-action bg-dark text-white MenuRPassBtn" style="cursor:default !important;">
+            <a href="/reseller/pass" class="list-group-item list-group-item-action bg-dark text-white MenuRPassBtn">
                 <span class="menu-collapsed">Password</span>
             </a>
-            <a href="/reseller/messages" class="list-group-item list-group-item-action bg-dark text-white MenuRMessagesBtn" style="cursor:default !important;">
+            <a href="/reseller/messages" class="list-group-item list-group-item-action bg-dark text-white MenuRMessagesBtn">
                 <span class="menu-collapsed">Messages <span class="badge badge-pill badge-primary badge-secondary ml-2">5</span></span>
             </a>
         </div>
 
-        <a href="/reseller/help" class="bg-dark list-group-item list-group-item-action MenuRHelpBtn" style="cursor:default !important;">
+        <a href="/reseller/help" class="bg-dark list-group-item list-group-item-action MenuRHelpBtn">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fas fa-question fa-fw mr-3"></span>
                 <span class="menu-collapsed">Help</span>
