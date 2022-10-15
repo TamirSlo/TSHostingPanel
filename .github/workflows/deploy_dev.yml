@@ -9,11 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Panel (DEV)
-        uses: appleboy/ssh-action@v0.1.2
+        uses: appleboy/ssh-action@master
         with:
           host: ${{secrets.SSH_HOST}}
+          port: ${{secrets.SSH_PORT}}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ${{ secrets.TARGET_DIR_DEV }}
-            sudo git pull
+            git pull
