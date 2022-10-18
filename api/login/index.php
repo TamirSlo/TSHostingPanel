@@ -1,13 +1,14 @@
 <?php
+namespace API;
 
 if(!@include("../main.php")) die("Error 1 -> Couldn't require Main Class.");
 
-$da = new DA();
+$tshp = TSHP::getInstance();
 
 if(isset($_POST['username'])){
 	$user = $_POST['username'];
 	$pass = $_POST['password'];
-	$r = $da->Login($user,$pass);
+	$r = $tshp->Login($user,$pass);
 	if($r['success']){
 		echo json_encode($r);
 	}else{

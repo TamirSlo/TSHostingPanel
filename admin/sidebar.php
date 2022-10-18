@@ -86,7 +86,7 @@
 
         <li class="list-group-item sidebar-separator"></li>
         
-        <a href="#account" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+        <a href="#account" class="bg-dark list-group-item list-group-item-action flex-column align-items-start text-muted" style="cursor:default !important;">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fas fa-user fa-fw mr-3"></span>
                 <span class="menu-collapsed">Account</span>
@@ -95,13 +95,13 @@
         </a>
 
         <div id='account' class="collapse sidebar-submenu">
-            <a href="/admin/account" class="list-group-item list-group-item-action bg-dark text-white MenuSettingsBtn">
+            <a href="/admin/account" class="list-group-item list-group-item-action bg-dark text-white MenuSettingsBtn text-muted">
                 <span class="menu-collapsed">Settings</span>
             </a>
-            <a href="/admin/account/password" class="list-group-item list-group-item-action bg-dark text-white MenuPassBtn">
+            <a href="/admin/account/password" class="list-group-item list-group-item-action bg-dark text-white MenuPassBtn text-muted">
                 <span class="menu-collapsed">Password</span>
             </a>
-            <a href="/admin/account/messages" class="list-group-item list-group-item-action bg-dark text-white MenuMessagesBtn">
+            <a href="/admin/account/messages" class="list-group-item list-group-item-action bg-dark text-white MenuMessagesBtn text-muted">
                 <span class="menu-collapsed">Messages <span class="badge badge-pill badge-primary badge-secondary ml-2">5</span></span>
             </a>
         </div>

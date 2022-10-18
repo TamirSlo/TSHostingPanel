@@ -1,28 +1,33 @@
 <?php
+namespace API;
 
+use API\Controllers\ResellerPackagesController;
+use API\DB;
+use API\Controllers\UserController;
 
-class DA extends Data{
+class TSHP {
 
-    private $db;
-    private $reseller;
-    private $admin;
+    public static self $instance;
+
+    public $db;
+    public $reseller;
+    public $admin;
     public $fname;
     public $lname;
     public $id;
 
-    public function __construct()
-    {
-        //Require necessary classes
-        session_start(); 
-        if(!@include("db.php")) die("Error 2 -> Couldn't require Database Class.");
-        if(!@include("config.php")) die("Error 3 -> Couldn't require Configuration.");
+    public UserController $users;
+    public ResellerPackagesController $resellerPackages;
+    
 
-        //Attempt a connection to the database
-        $this->db = new DB($config['db_host'],$config['db_user'],$config['db_pass'],$config['db_name']);
-        if (!($this->db->connect())) {
-            session_destroy();
-            die("Error 4 -> Database connection could not be established");
-        }
+    public function __construct(){
+        self::$instance = $this;
+        session_start(); 
+        spl_autoload_register(function ($class) {
+            include $_SERVER['DOCUMENT_ROOT'] . '/' . \str_replace('\\', '/', \strtolower($class)) . '.php';
+        });
+
+        $this->db = DB::getInstance();
 
         //Check for existing session
         $auth = $this->Authenticate();
@@ -52,6 +57,16 @@ class DA extends Data{
             }
         }
 
+        $this->users = new UserController();
+        $this->resellerPackages = new ResellerPackagesController();
+
+    }
+
+    public static function getInstance(): self{
+        if(!isset(self::$instance)){
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     public function Authenticate(){
@@ -151,15 +166,13 @@ class DA extends Data{
         return $return;
     }
 
-    private function generateSalt()
-    {
+    public function generateSalt(){
         $bytes = random_bytes(8);
         $salt = bin2hex($bytes);
         return $salt;
     }
 
-    private function hashPass($password, $salt)
-    {
+    public function hashPass($password, $salt){
         $p_md5 = md5($password);
         $s_sha1 = sha1($salt);
         $pns = $p_md5 . $s_sha1;
@@ -167,550 +180,11 @@ class DA extends Data{
         return $hashed;
     }
 
-    private function validateEmail($email){
-        $regex = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i";
-        if(!preg_match($regex, $email)) {
-            return false;
-        }
-        return true;
-    }
-
-    // public function addUser($user,$pass,$email,$fname,$lname,$welcomemail){
-    //     $cuid = $this->id;
-	
-    //     if(!$user || !$pass || !$email || !$fname || !$lname){
-    //         $r['success'] = false;
-    //         $r['error'] = "Please fill in all fields.";
-    //         return $r;
-    //     }
-	
-    //     if(!ctype_alpha($fname)){
-    //         $r['success'] = false;
-    //         $r['error'] = "First Name may only contain letters.";
-    //         return $r;
-    //     }
-        
-    //     if(!ctype_alpha($lname)){
-    //         $r['success'] = false;
-    //         $r['error'] = "Last Name may only contain letters.";
-    //         return $r;
-    //     }
-        
-    //     if(!$this->validateEmail($email)){
-    //         $r['success'] = false;
-    //         $r['error'] = "Email address entered is not valid.";
-    //         return $r;
-    //     }
-        
-    //     // if(!ctype_alnum(str_replace(".", "", $user))){
-    //     //     $r['success'] = false;
-    //     //     $r['error'] = "Username may only contain letters, numbers and dots.";
-    //     //     return $r;
-    //     // }
-
-    //     if(!preg_match_all('/^([a-zA-Z\s\d._-]+)$/', $user)){
-    //         $r['success'] = false;
-    //         $r['error'] = "The only characters allowed in Username are:<br><b>[A-Z0-9.-_].</b>";
-    //         return $r;
-    //     }
-
-    //     if(!preg_match_all('/^([a-zA-Z\s\d.-_!?@$%^&*]+)$/', $pass)){
-    //         $r['success'] = false;
-    //         $r['error'] = "The only characters allowed in Password are:<br><b>[A-Z0-9.-_!?@$%^&*].</b>";
-    //         return $r;
-    //     }
-        
-    //     // if(!ctype_alnum($pass)){
-    //     //     $r['success'] = false;
-    //     //     $r['error'] = "Password may only contain letters and numbers.";
-    //     //     return $r;
-    //     // }
-	
-    //     if($pos != 1 && $pos != 2){
-    //         $r['success'] = false;
-    //         $r['error'] = "Position must be chosen.";
-    //         return $r;
-    //     }else{
-    //         $pos--;
-    //     }
-
-    //     $s = $this->getUserDetails($user);
-    //     if($s['success'] && count($s['results']) != 0){
-    //         $r['success'] = false;
-    //         $r['error'] = "Username already exists.";
-    //         return $r;
-    //     }
-
-    //     $t = $this->getEmailDetails($email);
-    //     if($t['success'] && count($t['results']) != 0){
-    //         $r['success'] = false;
-    //         $r['error'] = "Email already exists.";
-    //         return $r;
-    //     }
-
-    //     // All good below...
-
-    //     $salt = $this->generateSalt();
-    //     $hpass = $this->hashPass($pass,$salt);
-
-    //     $u = $this->db->addEmployee($user,$hpass,$salt,$email,$fname,$lname,$pos);
-    //     $new_id = $this->db->lastInsertId();
-
-    //     $r['success'] = true;
-    //     $r['id'] = $new_id;
-
-    //     $mail = new Mail();
-    //     $admin_name = $this->fname." ".$this->lname;
-    //     $mail->welcomeMessage($admin_name,$user,$pass);
-    //     $mail->addEmployee($email);
-    //     $mail->send();
-
-        
-    //     return $r;
-    // }
-
     public function Logout(){
         session_destroy();
         return array("success"=>true);
     }
-
-    public function getUserByID($id){
-        $v = $this->vID($id);
-        if(!$v["valid"]) return $v;
-
-        $s = $this->db->getUserByID($id);
-        unset($s["results"][0]["Password"]);
-        unset($s["results"][0]["Salt"]);
-        return $s;
-    }
-
-    public function deleteUserByID($id){
-        $v = $this->vID($id);
-        if(!$v["valid"]) return $v;
-
-        if ($this->id == $id) {
-            return array(
-                "success"=>false,
-                "error"=>"You cannot delete yourself."
-            );
-        }
-
-        if(!$this->admin){
-            return array(
-                "success"=>false,
-                "error"=>"You do not have permission to delete users."
-            );
-        }
-
-        $s = $this->db->deleteUserByID($id);
-        return $s;
-    }
-
-    public function getUserDetails($user){
-        if(!ctype_alnum(str_replace(".", "", $user))){
-            $r['success'] = false;
-            $r['error'] = "Username may only contain letters, numbers and dots.";
-            return $r;
-        }
-
-        $s = $this->db->getUserDetails($user);
-        return $s;
-    }
-
-    public function getEmailDetails($email){
-        if(!$this->validateEmail($email)){
-            $r['success'] = false;
-            $r['error'] = "Email is not valid.";
-            return $r;
-        }
-
-        $s = $this->db->getEmailDetails($email);
-        return $s;
-    }
-
-    public function addAdmin($user,$pass,$email,$fname,$lname,$welcomemail){
-        if(!$this->admin){
-            $r['success'] = false;
-            $r['error'] = "You have no permissions to perform this request.";
-            return $r;
-        }
-	
-        if(!$user || !$pass || !$email || !$fname || !$lname){
-            $r['success'] = false;
-            $r['error'] = "Please fill in all fields.";
-            return $r;
-        }
-	
-        if(!ctype_alpha($fname)){
-            $r['success'] = false;
-            $r['error'] = "First Name may only contain letters.";
-            return $r;
-        }
-        
-        if(!ctype_alpha($lname)){
-            $r['success'] = false;
-            $r['error'] = "Last Name may only contain letters.";
-            return $r;
-        }
-        
-        if(!$this->validateEmail($email)){
-            $r['success'] = false;
-            $r['error'] = "Email address entered is not valid.";
-            return $r;
-        }
-
-        if(!preg_match_all('/^([a-zA-Z\s\d._-]+)$/', $user)){
-            $r['success'] = false;
-            $r['error'] = "The only characters allowed in Username are:<br><b>[A-Z0-9.-_].</b>";
-            return $r;
-        }
-
-        if(!preg_match_all('/^([a-zA-Z\s\d.-_!?@$%^&*]+)$/', $pass)){
-            $r['success'] = false;
-            $r['error'] = "The only characters allowed in Password are:<br><b>[A-Z0-9.-_!?@$%^&*].</b>";
-            return $r;
-        }
-
-        $s = $this->getUserDetails($user);
-        if($s['success'] && count($s['results']) != 0){
-            $r['success'] = false;
-            $r['error'] = "Username already exists.";
-            return $r;
-        }
-
-        $t = $this->getEmailDetails($email);
-        if($t['success'] && count($t['results']) != 0){
-            $r['success'] = false;
-            $r['error'] = "Email already exists.";
-            return $r;
-        }
-
-        // All good below...
-
-        $salt = $this->generateSalt();
-        $hpass = $this->hashPass($pass,$salt);
-
-        $u = $this->db->addAdmin($user,$hpass,$salt,$email,$fname,$lname);
-        $new_id = $this->db->lastInsertId();
-
-        $r['success'] = true;
-        $r['id'] = $new_id;
-        $r['message'] = "Admin added successfully.";
-
-        if($welcomemail){
-            // $mail = new Mail();
-            // $admin_name = $this->fname." ".$this->lname;
-            // $mail->welcomeAdminMessage($admin_name,$user,$pass);
-            // $mail->addRecipient($email);
-            // $mail->send();
-        }
-
-        
-        return $r;
-    
-    }
-
-    public function editUser($id,$user,$pass,$email,$fname,$lname){
-        if(!$this->admin){
-            $r['success'] = false;
-            $r['error'] = "You have no permissions to perform this request.";
-            return $r;
-        }
-    
-        if(!$user || !$email || !$fname || !$lname){
-            $r['success'] = false;
-            $r['error'] = "Please fill in all fields.";
-            return $r;
-        }
-    
-        if(!ctype_alpha($fname)){
-            $r['success'] = false;
-            $r['error'] = "First Name may only contain letters.";
-            return $r;
-        }
-        
-        if(!ctype_alpha($lname)){
-            $r['success'] = false;
-            $r['error'] = "Last Name may only contain letters.";
-            return $r;
-        }
-        
-        if(!$this->validateEmail($email)){
-            $r['success'] = false;
-            $r['error'] = "Email address entered is not valid.";
-            return $r;
-        }
-
-        if(!preg_match_all('/^([a-zA-Z\s\d._-]+)$/', $user)){
-            $r['success'] = false;
-            $r['error'] = "The only characters allowed in Username are:<br><b>[A-Z0-9.-_].</b>";
-            return $r;
-        }
-
-        if(!preg_match_all('/^([a-zA-Z\s\d.-_!?@$%^&*]+)$/', $pass) && $pass != ""){
-            $r['success'] = false;
-            $r['error'] = "The only characters allowed in Password are:<br><b>[A-Z0-9.-_!?@$%^&*].</b>";
-            return $r;
-        }
-
-        $s = $this->getUserDetails($user);
-        if($s['success'] && count($s['results']) != 0 && $s['results'][0]['UserID'] != $id){
-            $r['success'] = false;
-            $r['error'] = "Username already exists.";
-            return $r;
-        }
-
-        $t = $this->getEmailDetails($email);
-        if($t['success'] && count($t['results']) != 0 && $s['results'][0]['UserID'] != $id){
-            $r['success'] = false;
-            $r['error'] = "Email already exists.";
-            return $r;
-        }
-
-        // All good below...
-
-        if($pass != ""){
-            $salt = $this->generateSalt();
-            $hpass = $this->hashPass($pass,$salt);
-
-            $this->db->editUser($id,$user,$email,$fname,$lname);
-            $this->db->changeUserPass($id,$hpass,$salt);
-        }else{
-            $this->db->editUser($id,$user,$email,$fname,$lname);
-        }
-
-        $r['success'] = true;
-        $r['id'] = $id;
-        $r['message'] = "User details updated successfully.";
-
-        return $r;
-
-    }
-
-    public function addReseller($user,$pass,$email,$fname,$lname,$package,$welcomemail){
-        if(!$this->admin){
-            $r['success'] = false;
-            $r['error'] = "You have no permissions to perform this request.";
-            return $r;
-        }
-	
-        if(!$user || !$pass || !$email || !$fname || !$lname || !$package){
-            $r['success'] = false;
-            $r['error'] = "Please fill in all fields.";
-            return $r;
-        }
-	
-        if(!ctype_alpha($fname)){
-            $r['success'] = false;
-            $r['error'] = "First Name may only contain letters.";
-            return $r;
-        }
-        
-        if(!ctype_alpha($lname)){
-            $r['success'] = false;
-            $r['error'] = "Last Name may only contain letters.";
-            return $r;
-        }
-        
-        if(!$this->validateEmail($email)){
-            $r['success'] = false;
-            $r['error'] = "Email address entered is not valid.";
-            return $r;
-        }
-
-        if(!preg_match_all('/^([a-zA-Z\s\d._-]+)$/', $user)){
-            $r['success'] = false;
-            $r['error'] = "The only characters allowed in Username are:<br><b>[A-Z0-9.-_].</b>";
-            return $r;
-        }
-
-        if(!preg_match_all('/^([a-zA-Z\s\d.-_!?@$%^&*]+)$/', $pass)){
-            $r['success'] = false;
-            $r['error'] = "The only characters allowed in Password are:<br><b>[A-Z0-9.-_!?@$%^&*].</b>";
-            return $r;
-        }
-
-        if(!is_numeric($package)){
-            $r['success'] = false;
-            $r['error'] = "Invalid package selected.";
-            return $r;
-        }
-
-        $s = $this->getUserDetails($user);
-        if($s['success'] && count($s['results']) != 0){
-            $r['success'] = false;
-            $r['error'] = "Username already exists.";
-            return $r;
-        }
-
-        $t = $this->getEmailDetails($email);
-        if($t['success'] && count($t['results']) != 0){
-            $r['success'] = false;
-            $r['error'] = "Email already exists.";
-            return $r;
-        }
-
-        $u = $this->getResellerPackageByID($package);
-        if(!$u['success'] || count($u['results']) == 0){
-            $r['success'] = false;
-            $r['error'] = "Invalid Reseller Package.";
-            return $r;
-        }
-        
-
-        // All good below...
-
-        $salt = $this->generateSalt();
-        $hpass = $this->hashPass($pass,$salt);
-
-        $u = $this->db->addReseller($user,$hpass,$salt,$email,$fname,$lname,$package);
-        $new_id = $this->db->lastInsertId();
-
-        $r['success'] = true;
-        $r['id'] = $new_id;
-
-        if($welcomemail){
-            // $mail = new Mail();
-            // $admin_name = $this->fname." ".$this->lname;
-            // $mail->welcomeAdminMessage($admin_name,$user,$pass);
-            // $mail->addRecipient($email);
-            // $mail->send();
-        }
-
-        
-        return $r;
-    
-    }
-
-    public function getAdmins(){
-        if(!$this->admin){
-            $r['success'] = false;
-            $r['error'] = "You have no permissions to perform this request.";
-            return $r;
-        }
-
-        $list = $this->db->getAdmins();
-        return $list;
-    }
-
-    public function getResellers(){
-        if(!$this->admin){
-            $r['success'] = false;
-            $r['error'] = "You have no permissions to perform this request.";
-            return $r;
-        }
-
-        $list = $this->db->getResellers();
-        return $list;
-    }
-
-    public function addResellerPackage($name,$users,$bandwidth,$diskSpace,$domains,$subDomains,$databases,$ftpAccounts){
-        if(!$this->admin){
-            $r['success'] = false;
-            $r['error'] = "You have no permissions to perform this request.";
-            return $r;
-        }
-	
-        if(!$name){
-            $r['success'] = false;
-            $r['error'] = "Please fill in all fields.";
-            return $r;
-        }
-	
-        if(!ctype_alpha(str_replace(" ","",$name))){
-            $r['success'] = false;
-            $r['error'] = "Package Name may only contain letters and spaces.";
-            return $r;
-        }
-
-        if(!is_numeric($users) || $users < 0 || $users > 999){
-            $r['success'] = false;
-            $r['error'] = "Users amount must be between 0 and 999.";
-            return $r;
-        }
-
-        if(!is_numeric($bandwidth) || $bandwidth < 0 || $bandwidth > 999999){
-            $r['success'] = false;
-            $r['error'] = "Max bandwidth must be between 0 and 999,999.";
-            return $r;
-        }
-
-        if(!is_numeric($diskSpace) || $diskSpace < 0 || $diskSpace > 999999){
-            $r['success'] = false;
-            $r['error'] = "Max Disk Space must be between 0 and 999,999.";
-            return $r;
-        }
-
-        if(!is_numeric($domains) || $domains < 0 || $domains > 999){
-            $r['success'] = false;
-            $r['error'] = "Domains amount must be between 0 and 999.";
-            return $r;
-        }
-
-        if(!is_numeric($subDomains) || $subDomains < 0 || $subDomains > 999){
-            $r['success'] = false;
-            $r['error'] = "Sub Domains amount must be between 0 and 999.";
-            return $r;
-        }
-
-        if(!is_numeric($databases) || $databases < 0 || $databases > 999){
-            $r['success'] = false;
-            $r['error'] = "Database amount must be between 0 and 999.";
-            return $r;
-        }
-
-        if(!is_numeric($ftpAccounts) || $ftpAccounts < 0 || $ftpAccounts > 999){
-            $r['success'] = false;
-            $r['error'] = "FTP Accounts amount must be between 0 and 999.";
-            return $r;
-        }
-
-        // All good below...
-        
-        $u = $this->db->addResellerPackage($name,$users,$bandwidth,$diskSpace,$domains,$subDomains,$databases,$ftpAccounts);
-        $new_id = $this->db->lastInsertId();
-
-        $r['success'] = true;
-        $r['id'] = $new_id;
-        
-        return $r;
-    
-    }
-
-    public function getResellerPackages(){
-        if(!$this->admin){
-            $r['success'] = false;
-            $r['error'] = "You have no permissions to perform this request.";
-            return $r;
-        }
-
-        $list = $this->db->getResellerPackages();
-        return $list;
-    }
-
-    public function getResellerPackageByID($id){
-        if(!$this->admin){
-            $r['success'] = false;
-            $r['error'] = "You have no permissions to perform this request.";
-            return $r;
-        }
-
-        // check if id is valid
-        if(!is_numeric($id) || $id < 1){
-            $r['success'] = false;
-            $r['error'] = "Invalid Reseller Package ID.";
-            return $r;
-        }
-
-        $list = $this->db->getResellerPackageByID($id);
-        return $list;
-    }
 }
-
-
-
-
-
 
 
 
@@ -828,30 +302,4 @@ class UI{
     
 }
 
-
-
-
-
-
-
-
-
-
-// ======================= D A T A    H A N D L I N G    C L A S S ======================= \\
-
-class Data {
-
-    // DATA VERIFICATION METHODS
-    public function vID($id){
-        if(!is_numeric($id)){
-            $r['valid'] = false;
-            $r['error'] = "User ID may only contain numbers.";
-            return $r;
-        }else{
-            $r['valid'] = true;
-            return $r;
-        }
-    }
-    
-}
 ?>

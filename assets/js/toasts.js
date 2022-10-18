@@ -35,7 +35,7 @@ function generateSuccessToast() {
     return sToastNum;
 }
 
-function generateConfirmToast() {
+function generateConfirmToast(onConfirm) {
     cToastNum = cToastNum + 1;
     $("#toasts").append('<div class="toast fade" role="alert" aria-live="assertive" aria-atomix="true" data-autohide=false id="confirmtoast' + cToastNum + '"> \
         <div class="toast-header"> \
@@ -45,6 +45,9 @@ function generateConfirmToast() {
         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> \
         <span aria-hidden="true">&times;</span> \
         </button> \
-        </div><div class="toast-body"></div><div class="toast-footer"></div></div>');
+        </div><div class="toast-body"></div><div class="toast-footer"> \
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="toast">Cancel</button> \
+        <button type="button" class="btn btn-danger btn-sm" data-dismiss="toast" onclick="' + onConfirm +'">Delete</button> \
+        </div></div>');
     return cToastNum;
 }

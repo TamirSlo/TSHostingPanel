@@ -179,27 +179,27 @@ $(document).ready(function() {
     });
 
     $(".MenuSettingsBtn").click(function(e) {
-        $('#main').addClass('fadeout');
+        // $('#main').addClass('fadeout');
         e.preventDefault();
-        setTimeout(function() {
-            window.location.href = "/admin/account";
-        }, 500);
+        // setTimeout(function() {
+        //     window.location.href = "/user/account";
+        // }, 500);
     });
 
     $(".MenuPassBtn").click(function(e) {
-        $('#main').addClass('fadeout');
+        // $('#main').addClass('fadeout');
         e.preventDefault();
-        setTimeout(function() {
-            window.location.href = "/admin/account/password";
-        }, 500);
+        // setTimeout(function() {
+        //     window.location.href = "/user/account/password";
+        // }, 500);
     });
 
     $(".MenuMessagesBtn").click(function(e) {
-        $('#main').addClass('fadeout');
+        // $('#main').addClass('fadeout');
         e.preventDefault();
-        setTimeout(function() {
-            window.location.href = "/admin/account/messages";
-        }, 500);
+        // setTimeout(function() {
+        //     window.location.href = "/user/account/messages";
+        // }, 500);
     });
 
     // ========================================= S I D E B A R   R E S E L L E R   L I N K S =======================
@@ -552,18 +552,18 @@ $(document).ready(function() {
         }else if(action == "edit"){
             var id = button.data('id');
             $.get("/api/admin/users/admin.php?id="+id, function(data, status){
-                var data = JSON.parse(data);
-                if(data.success){
+                var result = JSON.parse(data);
+                if(result.success){
                     modal.find('.modal-title').text('Edit Admin');
-                    modal.find('#aIdInput').val(data.results[0].UserID);
-                    modal.find('#aFNameInput').val(data.results[0].FName);
-                    modal.find('#aLNameInput').val(data.results[0].LName);
-                    modal.find('#aEmailInput').val(data.results[0].Email);
-                    modal.find('#aUserInput').val(data.results[0].Username);
+                    modal.find('#aIdInput').val(result.data.UserID);
+                    modal.find('#aFNameInput').val(result.data.FName);
+                    modal.find('#aLNameInput').val(result.data.LName);
+                    modal.find('#aEmailInput').val(result.data.Email);
+                    modal.find('#aUserInput').val(result.data.Username);
                 }else{
                     var temp_id = generateErrorToast();
                     $('#errortoast'+temp_id).toast('show');
-                    $('#errortoast'+temp_id+' .toast-body').html("Error: "+data.error);
+                    $('#errortoast'+temp_id+' .toast-body').html("Error: "+result.error);
                 }
             }).fail(function(){
                 var temp_id = generateErrorToast();
@@ -586,12 +586,10 @@ $(document).ready(function() {
     $('.deleteAdmin').click(function(e){
         e.preventDefault();
         var id = $(this).data('id');
-        var temp_id = generateConfirmToast();
+        var temp_id = generateConfirmToast('deleteAdmin('+id+')');
         $('#confirmtoast'+temp_id).toast('show');
         $('#confirmtoast'+temp_id+' .toast-body').html("Are you sure you want to delete this admin?");
-        $('#confirmtoast'+temp_id+' .toast-footer').html('<button type="button" class="btn btn-secondary btn-sm" data-dismiss="toast">Cancel</button><button type="button" class="btn btn-danger btn-sm" data-dismiss="toast" onclick="deleteAdmin('+id+')">Delete</button>');
     });
-
 
     $("button[type='submit']","#AdminModalForm").click(function(e) {
         e.preventDefault();
@@ -612,7 +610,7 @@ $(document).ready(function() {
                     let fName = $("#AdminModalForm #aFNameInput").val();
                     let lName = $("#AdminModalForm #aLNameInput").val();
                     if(!data.message) $("#adminTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
-                    $("#admin"+data.id).html('<th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td>');
+                    $("#admin"+data.id).html('<th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1 deleteAdmin" data-id="'+data.id+'">Delete</button></td>');
                     $('#adminModal').modal('hide');
                     form[0].reset();
                 }else{
@@ -639,6 +637,26 @@ $(document).ready(function() {
             modal.find('.modal-title').text('Add a new Reseller');
         }else if(action == "edit"){
             var id = button.data('id');
+            $.get("/api/admin/users/reseller.php?id="+id, function(data){
+                var result = JSON.parse(data);
+                if(result.success){
+                    modal.find('.modal-title').text('Edit Reseller');
+                    modal.find('#rIdInput').val(result.data.UserID);
+                    modal.find('#rFNameInput').val(result.data.FName);
+                    modal.find('#rLNameInput').val(result.data.LName);
+                    modal.find('#rEmailInput').val(result.data.Email);
+                    modal.find('#rUserInput').val(result.data.Username);
+                    modal.find('#rPackageInput').val(result.data.ResellerPackageID);
+                }else{
+                    var temp_id = generateErrorToast();
+                    $('#errortoast'+temp_id).toast('show');
+                    $('#errortoast'+temp_id+' .toast-body').html("Error: "+result.error);
+                }
+            }).fail(function(){
+                var temp_id = generateErrorToast();
+                $('#errortoast'+temp_id).toast('show');
+                $('#errortoast'+temp_id+' .toast-body').html("Error: Could not connect to server. Please try again later...");
+            });
         }else{
             modal.find('.modal-title').text('Error');
             $(".modal-body").html("No action has been defined. Please refresh the page");
@@ -661,10 +679,11 @@ $(document).ready(function() {
                 if(data.success){
                     var temp_id = generateSuccessToast();
                     $('#successtoast' + temp_id).toast('show');
-                    $('#successtoast' + temp_id + ' .toast-body').html("Reseller was added successfully");
+                    $('#successtoast' + temp_id + ' .toast-body').html(data.message);
                     let fName = $("#ResellerModalForm #rFNameInput").val();
                     let lName = $("#ResellerModalForm #rLNameInput").val();
-                    $("#resellerTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
+                    if(!data.message) $("#resellerTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
+                    $("#reseller"+data.id).html('<th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" data-toggle="modal" data-target="#resellerModal" data-action="edit" data-id="'+data.id+'">Edit</button><button class="btn btn-danger px-1 py-0 mx-1 deleteReseller" data-id="'+data.id+'">Delete</button></td>');
                     $('#resellerModal').modal('hide');
                     $("#ResellerModalForm")[0].reset();
                 }else{
@@ -680,6 +699,14 @@ $(document).ready(function() {
                 me.prop("disabled", false);
                 me.html("Save Changes");
             })
+    });
+
+    $('.deleteReseller').click(function(e){
+        e.preventDefault();
+        var id = $(this).data('id');
+        var temp_id = generateConfirmToast('deleteReseller('+id+')');
+        $('#confirmtoast'+temp_id).toast('show');
+        $('#confirmtoast'+temp_id+' .toast-body').html("Are you sure you want to delete this reseller?");
     });
 
     $('#packageModal').on('show.bs.modal', function (event) {
@@ -757,6 +784,26 @@ function deleteAdmin(id){
             $('#successtoast'+temp_id).toast('show');
             $('#successtoast'+temp_id+' .toast-body').html("Admin deleted successfully");
             $('#admin'+id).remove();
+        }else{
+            var temp_id = generateErrorToast();
+            $('#errortoast'+temp_id).toast('show');
+            $('#errortoast'+temp_id+' .toast-body').html("Error: "+data.error);
+        }
+    }).fail(function(){
+        var temp_id = generateErrorToast();
+        $('#errortoast'+temp_id).toast('show');
+        $('#errortoast'+temp_id+' .toast-body').html("Error: Could not connect to server. Please try again later...");
+    });
+}
+
+function deleteReseller(id){
+    $.post("/api/admin/users/reseller.php", {delete: id}, function(data){
+        var data = JSON.parse(data);
+        if(data.success){
+            var temp_id = generateSuccessToast();
+            $('#successtoast'+temp_id).toast('show');
+            $('#successtoast'+temp_id+' .toast-body').html("Reseller deleted successfully");
+            $('#reseller'+id).remove();
         }else{
             var temp_id = generateErrorToast();
             $('#errortoast'+temp_id).toast('show');

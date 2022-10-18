@@ -1,13 +1,14 @@
 <?php
+namespace API;
 
 if(!@include("../../main.php")) die("Error 1 -> Couldn't require Main Class.");
 
-$da = new DA();
+$tshp = TSHP::getInstance();
 
 if(isset($_GET['id'])){
 	$id = $_GET['id'];
-	$user = $da->getUserByID($id);
-	echo json_encode($user);
+	$user = $tshp->users->getUserByID($id);
+	echo json_encode(array("success"=>true,"data"=>$user));
 }else if(isset($_POST['Username'])){
 	$user = $_POST['Username'];
 	$pass = $_POST['Password'];
@@ -15,25 +16,17 @@ if(isset($_GET['id'])){
 	$fname = $_POST['FName'];
 	$lname = $_POST['LName'];
 	$welcomemail = false;
-	if(isset($_POST['id']) && $_POST['id'] != ""){
-		$userid = $_POST['id'];
-		$r = $da->editUser($userid,$user,$pass,$email,$fname,$lname);
+	if(isset($_POST['UserID']) && $_POST['UserID'] != ""){
+		$userid = $_POST['UserID'];
+		$r = $tshp->users->getUserByID($userid)->edit($user,$pass,$email,$fname,$lname, Models\UserType::Admin(), null);
 	}else{
-		$r = $da->addAdmin($user,$pass,$email,$fname,$lname,$welcomemail);
+		$r = $tshp->users->create($_POST, Models\UserType::Admin());
 	}
-	if($r['success']){
-		echo json_encode($r);
-	}else{
-		echo json_encode($r);
-	}
+	echo json_encode($r);
 }else if(isset($_POST['delete'])){
 	$id = $_POST['delete'];
-	$r = $da->deleteUserByID($id);
-	if($r['success']){
-		echo json_encode($r);
-	}else{
-		echo json_encode($r);
-	}
+	$r = $tshp->users->deleteByID($id);
+	echo json_encode(array("success"=>$r));
 }else{
     http_response_code(405); // METHOD NOT ALLOWED
     echo json_encode(array("success"=>false,"error"=>"Method not allowed"));

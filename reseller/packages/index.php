@@ -1,13 +1,13 @@
 <?php 
+namespace API;
 
 if(!@include("../../api/main.php")) die("Error 1 -> Couldn't require Main Class.");
 
-$da = new DA();
+$tshp = TSHP::getInstance();
 
 $ui = new UI();
 
 $ui->headerReseller();
-$resellerPackages = $da->getResellerPackages();
 
 ?>
 
@@ -36,20 +36,7 @@ $resellerPackages = $da->getResellerPackages();
                 <th>Databases</th>
                 <th>Actions</th>
             </tr>
-            <?php foreach ($resellerPackages['results'] as $package) { ?>
-                <tr>
-                    <th><?php echo $package['Name']; ?></th>
-                    <td><?php echo $package['MaxBandwidth']; ?>MB</td>
-                    <td><?php echo $package['MaxDiskUsage']; ?>MB</td>
-                    <td><?php echo $package['MaxUsers']; ?></td>
-                    <td><?php echo $package['MaxDomains']; ?></td>
-                    <td><?php echo $package['MaxDatabases']; ?></td>
-                    <td>
-                        <button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button>
-                        <button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button>
-                    </td>
-                </tr>
-            <?php } ?>
+            <!-- TODO: Add User packages -->
         </table>
     <?php } ?>
     </div>

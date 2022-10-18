@@ -1,10 +1,11 @@
 <?php
+namespace API;
 
 if(!@include("main.php")) die("Error 1 -> Couldn't require Main Class.");
 
-$da = new DA();
+$tshp = TSHP::getInstance();
 
-$r = $da->Logout();
+$r = $tshp->Logout();
 if($r){
     die(json_encode($r));
 }

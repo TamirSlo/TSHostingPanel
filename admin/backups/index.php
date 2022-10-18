@@ -1,8 +1,9 @@
 <?php 
+namespace API;
 
 if(!@include("../../api/main.php")) die("Error 1 -> Couldn't require Main Class.");
 
-$da = new DA();
+$tshp = TSHP::getInstance();
 
 $ui = new UI();
 

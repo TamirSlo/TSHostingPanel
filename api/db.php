@@ -1,7 +1,11 @@
 <?php
+namespace API;
+
+use PDOException,PDO;
 
 class DB
 {
+    public static $instance;
     private $db = null;
 
     private $host = "";
@@ -17,11 +21,24 @@ class DB
         $this->dbname = $d;
     }
 
+    public static function getInstance(): DB
+    {
+        if (self::$instance == null) {
+            if(!@include("config.php")) die("Error 3 -> Couldn't require Configuration.");
+            self::$instance = new DB($config['db_host'],$config['db_user'],$config['db_pass'],$config['db_name']);
+            self::$instance->connect();
+            return self::$instance;
+        }else{
+            return self::$instance;
+        }
+    }
+
     public function connect()
     {
         try {
             $this->db = new PDO('mysql:host='.$this->host.';dbname='.$this->dbname, $this->username, $this->password);
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->instance = $this;
             return true;
         } catch (PDOException $e) {
             error_log('PDOException - ' . $e->getMessage(), 0);
@@ -80,46 +97,33 @@ class DB
         return $this->checkResponse($st);
     }
 
-    public function addAdmin($user,$hpass,$salt,$email,$fname,$lname){
+    public function addUser($user,$hpass,$salt,$email,$fname,$lname,$admin,$reseller,$resellerPackageID){
         try {
-            $query = "INSERT INTO users (Username, Password, Salt, Email, FName, LName, Admin) VALUES (?, ?, ?, ?, ?, ?, 1)";
+            $query = "INSERT INTO users (Username, Password, Salt, Email, FName, LName, Admin, Reseller, ResellerPackageID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
-            $s = $st->execute(array($user,$hpass,$salt,$email,$fname,$lname));
+            $s = $st->execute(array($user,$hpass,$salt,$email,$fname,$lname,$admin,$reseller,$resellerPackageID));
         } catch (PDOException $e) {
             error_log('PDOException - ' . $e->getMessage(), 0);
         }
         return $this->checkResponse($st, "INS", $s);
     }
 
-    public function editUser($id,$user,$email,$fname,$lname){
+    public function editUser($id,$user,$email,$fname,$lname,$admin,$reseller,$resellerPackageID){
         try {
-            $query = "UPDATE users SET Username = ?, Email = ?, FName = ?, LName = ? WHERE UserID = ?";
+            $query = "UPDATE users SET Username = ?, Email = ?, FName = ?, LName = ?, Admin = ?, Reseller = ?, ResellerPackageID = ? WHERE UserID = ?";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
-            $s = $st->execute(array($user,$email,$fname,$lname,$id));
+            $s = $st->execute(array($user,$email,$fname,$lname,$admin,$reseller,$resellerPackageID,$id));
         } catch (PDOException $e) {
             error_log('PDOException - ' . $e->getMessage(), 0);
         }
         return $this->checkResponse($st, "UPD", $s);
     }
 
-    public function addReseller($user,$hpass,$salt,$email,$fname,$lname,$package){
-        try {
-            $query = "INSERT INTO users (Username, Password, Salt, Email, FName, LName, Reseller, ResellerPackageID) VALUES (?, ?, ?, ?, ?, ?, 1, ?)";
-            $st = $this->db->prepare($query);
-            //$st->bindParam('?', $user);
-            $st->setFetchMode(PDO::FETCH_ASSOC);
-            $s = $st->execute(array($user,$hpass,$salt,$email,$fname,$lname,$package));
-        } catch (PDOException $e) {
-            error_log('PDOException - ' . $e->getMessage(), 0);
-        }
-        return $this->checkResponse($st, "INS", $s);
-    }
-
-    public function changeUserPass($id,$hpass,$salt){
+    public function editUserPassword($id,$hpass,$salt){
         try {
             $query = "UPDATE users SET Password = ?, Salt = ? WHERE UserID = ?";
             $st = $this->db->prepare($query);
@@ -197,9 +201,9 @@ class DB
         return $this->checkResponse($st);
     }
     
-    public function getAdmins(){
+    public function getAllUsers(){
         try {
-            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.ResellerID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a WHERE Admin = 1 ORDER BY a.UserID ASC";
+            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.Admin, a.Reseller, a.ResellerID, a.ResellerPackageID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a ORDER BY a.UserID ASC";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
@@ -209,14 +213,14 @@ class DB
         }
         return $this->checkResponse($st);
     }
-    
-    public function getResellers(){
+
+    public function getUsersOfReseller($resellerID){
         try {
-            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.ResellerID, a.ResellerPackageID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount, c.MaxUsers, c.MaxDiskUsage FROM users a INNER JOIN packages_reseller c WHERE a.Reseller = 1 AND a.ResellerPackageID=c.ResellerPackageID ORDER BY a.UserID ASC;";
+            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.ResellerID FROM users a WHERE a.ResellerID = ? ORDER BY a.UserID ASC;";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
-            $st->execute();
+            $st->execute(array($resellerID));
         } catch (PDOException $e) {
             error_log('PDOException - ' . $e->getMessage(), 0);
         }
@@ -238,7 +242,7 @@ class DB
 
     public function getResellerPackageByID($id){
         try {
-            $query = "SELECT * FROM packages_reseller WHERE PackageID = ?";
+            $query = "SELECT * FROM packages_reseller WHERE ResellerPackageID = ?";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
@@ -260,6 +264,32 @@ class DB
             error_log('PDOException - ' . $e->getMessage(), 0);
         }
         return $this->checkResponse($st, "DEL", $s);
+    }
+
+    public function updatePackageOfReseller($resellerID, $packageID){
+        try {
+            $query = "UPDATE users SET ResellerPackageID = ? WHERE UserID = ?";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $s = $st->execute(array($packageID, $resellerID));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st, "UPD", $s);
+    }
+
+    public function updatePackageOfUser($userID, $packageID){
+        try {
+            $query = "UPDATE users SET UserPackageID = ? WHERE UserID = ?";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $s = $st->execute(array($packageID, $userID));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st, "UPD", $s);
     }
 
     public function lastInsertId(){

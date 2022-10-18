@@ -49,14 +49,14 @@
             <a href="/reseller/system/logs" class="list-group-item list-group-item-action bg-dark text-white MenuRSystemLogsBtn">
                 <span class="menu-collapsed">View Logs</span>
             </a>
-            <a href="/reseller/system/settings" class="list-group-item list-group-item-action bg-dark text-white MenuRSystemSettingsBtn">
+            <a href="/reseller/system/settings" class="list-group-item list-group-item-action bg-dark text-white MenuRSystemSettingsBtn text-muted">
                 <span class="menu-collapsed">Reseller Settings</span>
             </a>
         </div>
 
         <li class="list-group-item sidebar-separator"></li>
 
-        <a href="#account" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+        <a href="#account" class="bg-dark list-group-item list-group-item-action flex-column align-items-start text-muted" style="cursor:default !important;">
             <div class="d-flex w-100 justify-content-start align-items-center">
                 <span class="fas fa-user fa-fw mr-3"></span>
                 <span class="menu-collapsed">Account</span>
@@ -65,13 +65,13 @@
         </a>
 
         <div id='account' class="collapse sidebar-submenu">
-            <a href="/reseller/account/settings" class="list-group-item list-group-item-action bg-dark text-white MenuRAccountSettingsBtn">
+            <a href="/reseller/account/settings" class="list-group-item list-group-item-action bg-dark text-white MenuRAccountSettingsBtn text-muted">
                 <span class="menu-collapsed">Settings</span>
             </a>
-            <a href="/reseller/pass" class="list-group-item list-group-item-action bg-dark text-white MenuRPassBtn">
+            <a href="/reseller/pass" class="list-group-item list-group-item-action bg-dark text-white MenuRPassBtn text-muted">
                 <span class="menu-collapsed">Password</span>
             </a>
-            <a href="/reseller/messages" class="list-group-item list-group-item-action bg-dark text-white MenuRMessagesBtn">
+            <a href="/reseller/messages" class="list-group-item list-group-item-action bg-dark text-white MenuRMessagesBtn text-muted">
                 <span class="menu-collapsed">Messages <span class="badge badge-pill badge-primary badge-secondary ml-2">5</span></span>
             </a>
         </div>
