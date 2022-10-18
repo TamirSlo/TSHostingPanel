@@ -24,7 +24,13 @@ class TSHP {
         self::$instance = $this;
         session_start(); 
         spl_autoload_register(function ($class) {
-            include $_SERVER['DOCUMENT_ROOT'] . '/' . \str_replace('\\', '/', \strtolower($class)) . '.php';
+            // if string ends with Controller
+            if( substr($class, -10) === 'Controller' ){
+                $path = str_replace('\\', '/', substr(strtolower($class), 0, -10)) . '.controller.php';
+            } else {
+                $path = str_replace('\\', '/', strtolower($class)) . '.php';
+            }
+            include $_SERVER['DOCUMENT_ROOT'] . '/' . $path;
         });
 
         $this->db = DB::getInstance();
