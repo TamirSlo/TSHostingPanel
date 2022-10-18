@@ -19,7 +19,7 @@ class Name implements JsonSerializable {
         return $this->Name;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->Name;
     }

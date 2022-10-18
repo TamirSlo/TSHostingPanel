@@ -19,7 +19,7 @@ class Email implements JsonSerializable {
         return $this->email;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->email;
     }

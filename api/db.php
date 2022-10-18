@@ -38,19 +38,12 @@ class DB
         try {
             $this->db = new PDO('mysql:host='.$this->host.';dbname='.$this->dbname, $this->username, $this->password);
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->instance = $this;
             return true;
         } catch (PDOException $e) {
             error_log('PDOException - ' . $e->getMessage(), 0);
             http_response_code(500);
             die('Error establishing connection with database');
         }
-        /*$this->db = mysqli_connect($this->host, $this->username, $this->password, $this->dbname);
-        if ($this->db) {
-            return true;
-        } else {
-            return false;
-        }*/
     }
 
     private function checkResponse($r, $sql = "SEL", $s = true){ // $r = a PDOStatement Object, $sql = type of statement [SEL,INS,UPD,DEL];
@@ -151,7 +144,7 @@ class DB
 
     public function getUserByID($id){
         try {
-            $query = "SELECT * FROM users WHERE UserID = ?";
+            $query = "SELECT *, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a WHERE UserID = ?";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);

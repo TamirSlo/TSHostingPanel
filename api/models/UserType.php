@@ -20,7 +20,7 @@ class UserType implements JsonSerializable {
         return $this->type;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->type;
     }
