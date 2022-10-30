@@ -4,25 +4,29 @@ namespace API\Models;
 use JsonSerializable;
 
 class UserType implements JsonSerializable {
-    private string $type;
+    private Role $type;
 
     public function __construct(bool $admin, bool $reseller){
         if($admin){
-            $this->type = 'Admin';
+            $this->type = Role::Admin;
         } else if($reseller){
-            $this->type = 'Reseller';
+            $this->type = Role::Reseller;
         } else {
-            $this->type = 'User';
+            $this->type = Role::User;
         }
     }
 
     public function __toString(): string{
-        return $this->type;
+        return match($this->type){
+            Role::Admin => 'Admin',
+            Role::Reseller => 'Reseller',
+            Role::User => 'User',
+        };
     }
 
     public function jsonSerialize(): mixed
     {
-        return $this->type;
+        return $this->__toString();
     }
 
     public static function Admin(): UserType{
@@ -37,11 +41,23 @@ class UserType implements JsonSerializable {
         return new UserType(false, false);
     }
 
+    public function getRole(): Role{
+        return $this->type;
+    }
+
     public function isAdmin(): bool{
-        return $this->type == 'Admin';
+        return $this->type == Role::Admin;
     }
 
     public function isReseller(): bool{
-        return $this->type == 'Reseller';
+        return $this->type == Role::Reseller;
+    }
+
+    public function isUser(): bool{
+        return $this->type == Role::User;
+    }
+
+    public function isNotUser(): bool{
+        return $this->type == Role::Admin || $this->type == Role::Reseller;
     }
 }

@@ -16,7 +16,7 @@ $resellerList = $allUsers->filterByType(UserType::Reseller());
 $userList = $allUsers->filterByType(UserType::User());
 
 $resellerPackages = $tshp->resellerPackages->selectAll();
-
+$userPackages = []; //TODO: implement user packages
 ?>
 
 <h1 class="h2 m-2">Users</h1>
@@ -52,7 +52,7 @@ $resellerPackages = $tshp->resellerPackages->selectAll();
                         <td><div class="show-tooltip" title="0.00MB/3.60GB">0.00MB</div></td>
                         <td>
                             <button class="btn btn-info px-1 py-0 mx-1" data-toggle="modal" data-target="#adminModal" data-action="edit" data-id="<?php echo $admin->UserID; ?>">Edit</button>
-                            <button class="btn btn-danger px-1 py-0 mx-1 deleteAdmin" data-id="<?php echo $admin->UserID; ?>" <?php if($tshp->id == $admin->UserID) echo "disabled"; ?>>Delete</button>
+                            <button class="btn btn-danger px-1 py-0 mx-1 deleteAdmin" data-id="<?php echo $admin->UserID; ?>" <?php if($tshp->user->UserID == $admin->UserID) echo "disabled"; ?>>Delete</button>
                         </td>
                     </tr>
                     <?php
@@ -186,7 +186,7 @@ $resellerPackages = $tshp->resellerPackages->selectAll();
                         <label class="col-4 col-lg-2 col-form-label" for="aUserInput">Username :</label>
                         <div class="col-8 col-lg-4">
                             <input type="text" hidden autocomplete="username"/>
-                            <input type="text" name="Username" class="w-100 form-control mb-2 mr-sm-2" id="aUserInput" placeholder="Username" required>
+                            <input type="text" name="Username" class="w-100 form-control mb-2 mr-sm-2" id="aUserInput" placeholder="Username" required autocomplete="new-username">
                         </div>
 
                         <label class="col-4 col-lg-2 col-form-label" for="aPassInput">Password :</label>
@@ -249,7 +249,7 @@ $resellerPackages = $tshp->resellerPackages->selectAll();
                         <label class="col-4 col-lg-2 col-form-label" for="rUserInput">Username :</label>
                         <div class="col-8 col-lg-4">
                             <input type="text" hidden autocomplete="username"/>
-                            <input type="text" name="Username" class="w-100 form-control mb-2 mr-sm-2" id="rUserInput" placeholder="Username" required>
+                            <input type="text" name="Username" class="w-100 form-control mb-2 mr-sm-2" id="rUserInput" placeholder="Username" required autocomplete="new-username">
                         </div>
 
                         <label class="col-4 col-lg-2 col-form-label" for="rPassInput">Password :</label>
@@ -328,7 +328,7 @@ $resellerPackages = $tshp->resellerPackages->selectAll();
                         <label class="col-4 col-lg-2 col-form-label" for="uUserInput">Username :</label>
                         <div class="col-8 col-lg-4">
                             <input type="text" hidden autocomplete="username"/>
-                            <input type="text" name="Username" class="w-100 form-control mb-2 mr-sm-2" id="uUserInput" placeholder="Username" required>
+                            <input type="text" name="Username" class="w-100 form-control mb-2 mr-sm-2" id="uUserInput" placeholder="Username" required autocomplete="new-username">
                         </div>
 
                         <label class="col-4 col-lg-2 col-form-label" for="uPassInput">Password :</label>
@@ -360,12 +360,12 @@ $resellerPackages = $tshp->resellerPackages->selectAll();
                                 <option value="0" disabled>Select a reseller from the list</option>
                                 <optgroup label="Admins">
                                     <?php foreach ($adminList as $admin) { ?>
-                                        <option value="<?php echo $admin->UserID; ?>" <?php if($reseller->UserID == $tshp->id) echo "selected"; ?>><?php echo $admin->fullName(); ?></option>
+                                        <option value="<?php echo $admin->UserID; ?>" <?php if($reseller->UserID == $tshp->user->UserID) echo "selected"; ?>><?php echo $admin->fullName(); ?></option>
                                     <?php } ?>
                                 </optgroup>
                                 <optgroup label="Resellers">
                                     <?php foreach ($resellerList as $reseller) { ?>
-                                        <option value="<?php echo $reseller->UserID; ?> <?php if($reseller->UserID == $tshp->id) echo "selected"; ?>"><?php echo $reseller->fullName(); ?></option>
+                                        <option value="<?php echo $reseller->UserID; ?> <?php if($reseller->UserID == $tshp->user->UserID) echo "selected"; ?>"><?php echo $reseller->fullName(); ?></option>
                                     <?php } ?>
                                 </optgroup>
                             </select>
@@ -375,7 +375,7 @@ $resellerPackages = $tshp->resellerPackages->selectAll();
                     <div class="row w-100 m-0 mt-3">
                         <div class="col p-0 text-right">
                             <div class="custom-control custom-switch mx-1 pl-5" style="border: 2px solid #ff2277;border-radius: 6px;background: #ffff2222;display: inline-block;">
-                                <input type="checkbox" class="custom-control-input" id="rWelcomeInput" checked>
+                                <input type="checkbox" class="custom-control-input" id="uWelcomeInput" checked>
                                 <label class="custom-control-label orange center pt-1 pb-2 pr-2" for="uWelcomeInput">Send Welcome Message</label>
                             </div>
                             <button type="button" class="btn btn-secondary text-right mx-1" data-dismiss="modal">Close</button>

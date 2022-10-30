@@ -79,7 +79,7 @@ class DB
 
     public function Login($user){
         try {
-            $query = "SELECT * FROM users WHERE Username = ?";
+            $query = "SELECT Salt, Password, Suspended FROM users WHERE Username = ?";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
@@ -170,7 +170,7 @@ class DB
 
     public function getUserDetails($user){
         try {
-            $query = "SELECT * FROM users WHERE Username = ?";
+            $query = "SELECT *, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a WHERE Username = ?";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
@@ -183,7 +183,7 @@ class DB
     
     public function getEmailDetails($email){
         try {
-            $query = "SELECT * FROM users WHERE Email = ?";
+            $query = "SELECT *, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a WHERE Email = ?";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);

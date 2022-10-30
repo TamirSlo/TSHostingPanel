@@ -17,17 +17,21 @@ if(isset($_GET['id'])){
 	$lname = $_POST['LName'];
 	$package = $_POST['Package'];
 	$welcomemail = false;
-	if(isset($_POST['id']) && $_POST['id'] != ""){
-		$userid = $_POST['id'];
-		$r = $tshp->users->getUserByID($userid)->edit($user,$pass,$email,$fname,$lname, Models\UserType::Reseller(),$package);
+	if(isset($_POST['UserID']) && $_POST['UserID'] != ""){
+		$userid = $_POST['UserID'];
+		$r = $tshp->users->getUserByID($userid)->edit(
+			new Models\Name($user),
+			$pass,
+			new Models\Email($email),
+			new Models\Name($fname),
+			new Models\Name($lname),
+			Models\UserType::Reseller(),
+			$package
+		);
 	}else{
 		$r = $tshp->users->create($_POST, Models\UserType::Reseller());
 	}
-	if($r['success']){
-		echo json_encode($r);
-	}else{
-		echo json_encode($r);
-	}
+	echo json_encode(array("success"=>true,"data"=>$r,"message"=>"Successfully saved reseller."));
 }else if(isset($_POST['delete'])){
 	$id = $_POST['delete'];
 	$r = $tshp->users->deleteByID($id);

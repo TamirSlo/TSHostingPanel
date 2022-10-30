@@ -580,6 +580,7 @@ $(document).ready(function() {
     $('#adminModal').on('hidden.bs.modal', function (event) {
         var modal = $(this);
         var form = modal.find('form');
+        $('#aIDInput').val("");
         form[0].reset();
     });
 
@@ -601,22 +602,22 @@ $(document).ready(function() {
         me.html('<span class="spinner-border spinner-border-sm mb-1 role="status" aria-hidden="true"></span> Checking details...');
 
         $.post("/api/admin/users/admin.php", data)
-            .done(function(data) {
-                data = JSON.parse(data);
-                if(data.success){
+            .done(function(response) {
+                result = JSON.parse(response);
+                if(result.success){
                     var temp_id = generateSuccessToast();
                     $('#successtoast' + temp_id).toast('show');
-                    $('#successtoast' + temp_id + ' .toast-body').html(data.message);
+                    $('#successtoast' + temp_id + ' .toast-body').html(result.message);
                     let fName = $("#AdminModalForm #aFNameInput").val();
                     let lName = $("#AdminModalForm #aLNameInput").val();
-                    if(!data.message) $("#adminTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
-                    $("#admin"+data.id).html('<th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1 deleteAdmin" data-id="'+data.id+'">Delete</button></td>');
+                    if($("#admin"+result.data.UserID).length == 0) $("#adminTable tr:last").after('<tr> <th>'+result.data.UserID+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
+                    $("#admin"+result.data.UserID).html('<th>'+result.data.UserID+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1 deleteAdmin" data-id="'+result.data.UserID+'">Delete</button></td>');
                     $('#adminModal').modal('hide');
                     form[0].reset();
                 }else{
                     var temp_id = generateErrorToast();
                     $('#errortoast' + temp_id).toast('show');
-                    $('#errortoast' + temp_id + ' .toast-body').html(data.error);
+                    $('#errortoast' + temp_id + ' .toast-body').html(result.error);
                 }
             }).fail(function(){
                 var temp_id = generateErrorToast();
@@ -664,6 +665,13 @@ $(document).ready(function() {
         }
     });
 
+    $('#resellerModal').on('hidden.bs.modal', function (event) {
+        var modal = $(this);
+        var form = modal.find('form');
+        $('#rIDInput').val("");
+        form[0].reset();
+    });
+
     $("button[type='submit']","#ResellerModalForm").click(function(e) {
         e.preventDefault();
         var form = $("#ResellerModalForm");
@@ -674,16 +682,16 @@ $(document).ready(function() {
         me.html('<span class="spinner-border spinner-border-sm mb-1 role="status" aria-hidden="true"></span> Checking details...');
 
         $.post("/api/admin/users/reseller.php", data)
-            .done(function(data) {
-                data = JSON.parse(data);
-                if(data.success){
+            .done(function(response) {
+                result = JSON.parse(response);
+                if(result.success){
                     var temp_id = generateSuccessToast();
                     $('#successtoast' + temp_id).toast('show');
-                    $('#successtoast' + temp_id + ' .toast-body').html(data.message);
+                    $('#successtoast' + temp_id + ' .toast-body').html(result.message);
                     let fName = $("#ResellerModalForm #rFNameInput").val();
                     let lName = $("#ResellerModalForm #rLNameInput").val();
-                    if(!data.message) $("#resellerTable tr:last").after('<tr> <th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
-                    $("#reseller"+data.id).html('<th>'+data.id+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" data-toggle="modal" data-target="#resellerModal" data-action="edit" data-id="'+data.id+'">Edit</button><button class="btn btn-danger px-1 py-0 mx-1 deleteReseller" data-id="'+data.id+'">Delete</button></td>');
+                    if($("#reseller"+result.data.UserID).length == 0) $("#resellerTable tr:last").after('<tr> <th>'+result.data.UserID+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
+                    $("#reseller"+result.data.UserID).html('<th>'+result.data.UserID+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" data-toggle="modal" data-target="#resellerModal" data-action="edit" data-id="'+result.data.UserID+'">Edit</button><button class="btn btn-danger px-1 py-0 mx-1 deleteReseller" data-id="'+result.data.UserID+'">Delete</button></td>');
                     $('#resellerModal').modal('hide');
                     $("#ResellerModalForm")[0].reset();
                 }else{

@@ -81,14 +81,29 @@ class User {
         return self::dbUserToObject($user['results'][0]);
     }
 
+    public static function selectByEmail(Email $email): self {
+        $db = \API\DB::getInstance();
+        $user = $db->getEmailDetails($email);
+        if(!$user['success'] || count($user['results']) == 0) throw new \Exception("User not found");
+
+        return self::dbUserToObject($user['results'][0]);
+    }
+
+    public static function selectByUsername(Name $username): self {
+        $db = \API\DB::getInstance();
+        $user = $db->getUserDetails($username);
+        if(!$user['success'] || count($user['results']) == 0) throw new \Exception("User not found");
+
+        return self::dbUserToObject($user['results'][0]);
+    }
+
     public function create(string $pass): self {
         $db = \API\DB::getInstance();
-        $tshp = \API\TSHP::getInstance();
 
-        $salt = $tshp->generateSalt($pass);
-        $hash = $tshp->hashPass($pass, $salt);
+        $salt = \API\Auth\Session::generateSalt();
+        $hash = \API\Auth\Session::hashPass($pass, $salt);
 
-        $user = $db->addUser((string) $this->Username, $hash, $salt, (string) $this->Email, (string) $this->FName, (string) $this->LName, (int) $this->UserType->isAdmin(), (int) $this->UserType->isReseller(), $tshp->id, $this->ResellerPackageID);
+        $user = $db->addUser((string) $this->Username, $hash, $salt, (string) $this->Email, (string) $this->FName, (string) $this->LName, (int) $this->Admin, (int) $this->Reseller, (int) $this->ResellerID, (int) $this->ResellerPackageID);
         if(!$user['success']) throw new \Exception("User not created");
 
         $this->UserID = $db->lastInsertId();
@@ -97,7 +112,6 @@ class User {
 
     public function edit(Name $user, string $pass, Email $email, Name $fname, Name $lname, UserType $userType, ?int $resellerPackageID): self {
         $db = \API\DB::getInstance();
-        $tshp = \API\TSHP::getInstance();
 
         if($resellerPackageID == null) {
             $resellerPackageID = $this->ResellerPackageID;
@@ -106,19 +120,59 @@ class User {
             $resellerPackageID = $resellerPackage->ResellerPackageID;
         }
 
-        $user = $db->editUser($this->UserID, (string) $user, (string) $email, (string) $fname, (string) $lname, (int) $userType->isAdmin(), (int) $userType->isReseller(), $resellerPackageID);
+        $emailExists = false;
+        try{
+            $emailUser = User::selectByEmail($email);
+            if($emailUser->UserID !== $this->UserID) $emailExists = true;
+        }catch(\Exception $e){
+            // Do nothing
+        }finally{
+            if($emailExists){
+                throw new \Exception('Email already exists');
+            }
+        }
+
+        $usernameExists = false;
+        
+        try{
+            $usernameUser = User::selectByUsername($user);
+            if($usernameUser->UserID !== $this->UserID) $usernameExists = true;
+        }catch(\Exception $e){
+            // Do nothing
+        }finally{
+            if($usernameExists){
+                throw new \Exception('Username already exists');
+            }
+        }
+
+        try{
+            if($userType->isReseller()){
+                if($this->ResellerPackageID) ResellerPackage::selectByID($user->ResellerPackageID);
+                else throw new \Exception('Reseller package not selected');
+            }elseif($userType->isUser()){
+                // TODO: Check for UserPackageID
+                if($this->ResellerID) User::selectByID($user->ResellerID);
+                else throw new \Exception('Reseller not selected');
+            }
+        }catch(\Exception $e){
+            throw $e;
+        }
+
+        $userQuery = $db->editUser($this->UserID, (string) $user, (string) $email, (string) $fname, (string) $lname, (int) $userType->isAdmin(), (int) $userType->isReseller(), $resellerPackageID);
         if(!empty($pass)){
-            $salt = $tshp->generateSalt($pass);
-            $db->editUserPassword($this->UserID, $tshp->hashPass($pass, $salt), $salt);
+            $salt = \API\Auth\Session::generateSalt();
+            $pass = \API\Auth\Session::hashPass($pass, $salt);
+            $db->editUserPassword($this->UserID, $pass, $salt);
 
         }
-        if(!$user['success']) throw new \Exception("User not edited");
+        if(!$userQuery['success']) throw new \Exception("User not edited");
 
         return $this;
     }
 
     public function delete(): bool {
-        $this->db->deleteUserByID($this->UserID);
+        $db = \API\DB::getInstance();
+        $db->deleteUserByID($this->UserID);
         return true;
     }
 

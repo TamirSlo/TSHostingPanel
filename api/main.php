@@ -1,28 +1,23 @@
 <?php
 namespace API;
 
+use API\Auth\Session;
 use API\Controllers\ResellerPackagesController;
 use API\DB;
 use API\Controllers\UserController;
+use API\Models\User;
 
 class TSHP {
 
     public static self $instance;
 
-    public $db;
-    public $reseller;
-    public $admin;
-    public $fname;
-    public $lname;
-    public $id;
-
+    public ?User $user;
     public UserController $users;
     public ResellerPackagesController $resellerPackages;
     
 
     public function __construct(){
         self::$instance = $this;
-        session_start(); 
         spl_autoload_register(function ($class) {
             // if string ends with Controller
             if( substr($class, -10) === 'Controller' ){
@@ -33,35 +28,18 @@ class TSHP {
             include $_SERVER['DOCUMENT_ROOT'] . '/' . $path;
         });
 
+        set_exception_handler(function($e){
+            // http_response_code(500);
+            echo json_encode([
+                "success" => false,
+                "error" => $e->getMessage()
+            ]);
+        });
+
         $this->db = DB::getInstance();
-
-        //Check for existing session
-        $auth = $this->Authenticate();
-        if($auth){
-            $url = $_SERVER['REQUEST_URI'];
-
-            if($this->admin){
-                if (!strpos($url,'admin') && !strpos($url,'reseller') && !strpos($url,'user') && !strpos($url,'api')) header("Location:/admin/");
-            } else if($this->reseller) {
-                if (!strpos($url,'reseller') && !strpos($url,'user') && !strpos($url,'api')) header("Location:/reseller/");
-            } else {
-                if (!strpos($url,'user') && !strpos($url,'api')) header("Location:/user/");
-            }
-        }else{
-            //echo "Oops, seems like ur a guest, or ur password changed!";
-            //echo $_SERVER['REQUEST_URI'];
-            switch ($_SERVER['REQUEST_URI']) {
-                case '/':
-                    break;
-                case '/api/login/':
-                    break;
-                default:
-                    setcookie("error",str_replace(' ','%20',"You are not authorised to view this page... Please login."),0,"/");
-                    setcookie("eRefferal",$_SERVER['REQUEST_URI'],0,"/");
-                    header("Location:/");
-                    
-            }
-        }
+        
+        $session = new Session();
+        $this->user = $session->user ?? null;
 
         $this->users = new UserController();
         $this->resellerPackages = new ResellerPackagesController();
@@ -73,122 +51,6 @@ class TSHP {
             self::$instance = new self();
         }
         return self::$instance;
-    }
-
-    public function Authenticate(){
-        if(isset($_SESSION['Username'])){
-            $user = $_SESSION['Username'];
-            $pass = $_SESSION['Password'];
-            
-            $result = $this->db->Login($user);
-            if($result['success']){
-                $dbpass = $result["results"][0]['Password'];
-                if($pass = $dbpass) {
-                    $this->admin = $result["results"][0]['Admin'];
-                    $this->reseller = $result["results"][0]['Reseller'];
-                    $this->id = $result["results"][0]['UserID'];
-                    $this->fname = $result["results"][0]['FName'];
-                    $this->lname = $result["results"][0]['LName'];
-                    $_SESSION['FName'] = $result["results"][0]['FName'];
-                    $_SESSION['LName'] = $result["results"][0]['LName'];
-                    $_SESSION['Admin'] = $result["results"][0]['Admin'];
-                    $_SESSION['Reseller'] = $result["results"][0]['Reseller'];
-                    $_SESSION['UserID'] = $result["results"][0]['UserID'];
-                    $suspended = $result["results"][0]['Suspended'];
-                    if($suspended){
-                        return false;
-                    }
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public function Login($user,$pass){
-
-        if(!$user || !$pass){
-            $r['success'] = false;
-            $r['error'] = "Please fill in all fields.";
-            return $r;
-        }
-        
-        if(!ctype_alnum(str_replace(".", "", $user))){
-            $r['success'] = false;
-            $r['error'] = "Username may only contain letters, numbers and dots.";
-            return $r;
-        }
-
-        if(!ctype_alnum($pass)){
-            $r['success'] = false;
-            $r['error'] = "Password may only contain letters and numbers.";
-            return $r;
-        }
-
-        $return = array();
-        $result = $this->db->Login($user);
-        if($result['success'] && count($result['results']) > 0){
-            $dbpassword = $result["results"][0]['Password'];
-            $dbsalt = $result["results"][0]['Salt'];
-
-            $hpass = $this->hashPass($pass,$dbsalt);
-
-            if($dbpassword == $hpass){
-                $return["success"] = true;
-
-                $id = $result["results"][0]['UserID'];
-                $admin = $result["results"][0]['Admin'];
-                $reseller = $result["results"][0]['Reseller'];
-                $fname = $result["results"][0]['FName'];
-                $lname = $result["results"][0]['LName'];
-                $suspended = $result["results"][0]['Suspended'];
-
-                $return['redirect'] = "user/";
-                if($admin) $return['redirect'] = "admin/";
-                if($reseller) $return['redirect'] = "reseller/";
-
-                $_SESSION['Username'] = $user;
-                $_SESSION['Password'] = $dbpassword;
-                $_SESSION['Admin'] = $admin;
-                $_SESSION['FName'] = $fname;
-                $_SESSION['LName'] = $lname;
-                $_SESSION['UserID'] = $id;
-                $_SESSION['Reseller'] = $reseller;
-                $_SESSION['Suspended'] = $suspended;
-
-                if($suspended){
-                    $return["success"] = false;
-                    $return["error"] = "Your account has been suspended.";
-                }
-            } else {
-                $return["success"] = false;
-                $return["error"] = "Invalid login. Please verify your Username and Password";
-            }
-
-        } else {
-            $return["success"] = false;
-            $return["error"] = "Invalid login. Please verify your Username and Password";
-        }
-        return $return;
-    }
-
-    public function generateSalt(){
-        $bytes = random_bytes(8);
-        $salt = bin2hex($bytes);
-        return $salt;
-    }
-
-    public function hashPass($password, $salt){
-        $p_md5 = md5($password);
-        $s_sha1 = sha1($salt);
-        $pns = $p_md5 . $s_sha1;
-        $hashed = md5($pns);
-        return $hashed;
-    }
-
-    public function Logout(){
-        session_destroy();
-        return array("success"=>true);
     }
 }
 

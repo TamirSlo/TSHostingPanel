@@ -1,11 +1,9 @@
 <?php
 
+$tshp = \API\TSHP::getInstance();
 
-$fname = $_SESSION['FName'];
-$lname = $_SESSION['LName'];
-$admin = $_SESSION['Admin'];
-$reseller = $_SESSION['Reseller'];
-
+$fname = $tshp->user->FName;
+$lname = $tshp->user->LName;
 
 ?>
 

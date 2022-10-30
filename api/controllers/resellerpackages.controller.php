@@ -1,23 +1,18 @@
 <?php
 namespace API\Controllers;
 
+use API\Auth\RBAC;
 use API\Models\ResellerPackage;
 
 class ResellerPackagesController {
 
     public function selectAll(){
-        $tshp = \API\TSHP::getInstance();
-        if(!$tshp->admin) {
-            throw new \Exception('Unauthorized');
-        }
+        RBAC::checkPerms("resellerPackages.read", null);
         return ResellerPackage::selectAll(); 
     }
 
     public function create(array $dbResellerPackage): ResellerPackage{
-        $tshp = \API\TSHP::getInstance();
-        if(!$tshp->admin) {
-            throw new \Exception('Unauthorized');
-        }
+        RBAC::checkPerms("resellerPackages.create", null);
 
         $dbResellerPackage['ResellerPackageID'] = 0;
         $resellerPackage = ResellerPackage::dbResellerPackageToObject($dbResellerPackage);
