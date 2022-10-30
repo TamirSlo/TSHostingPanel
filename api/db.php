@@ -285,6 +285,45 @@ class DB
         return $this->checkResponse($st, "UPD", $s);
     }
 
+    public function getUserPackages(){
+        try {
+            $query = "SELECT * FROM packages_user";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $st->execute();
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st);
+    }
+
+    public function getUserPackageByID($id){
+        try {
+            $query = "SELECT * FROM packages_user WHERE UserPackageID = ?";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $st->execute(array($id));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st);
+    }
+
+    public function addUserPackage($name,$resellerID,$bandwidth,$diskSpace,$domains,$subDomains,$databases,$ftpAccounts){
+        try {
+            $query = "INSERT INTO packages_user (Name, ResellerID, MaxBandwidth, MaxDiskUsage, MaxDomains, MaxSubDomains, MaxDatabases, MaxFTPAccounts) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $st = $this->db->prepare($query);
+            //$st->bindParam('?', $user);
+            $st->setFetchMode(PDO::FETCH_ASSOC);
+            $s = $st->execute(array($name,$resellerID,$bandwidth,$diskSpace,$domains,$subDomains,$databases,$ftpAccounts));
+        } catch (PDOException $e) {
+            error_log('PDOException - ' . $e->getMessage(), 0);
+        }
+        return $this->checkResponse($st, "INS", $s);
+    }
+
     public function lastInsertId(){
         $id = $this->db->lastInsertId();
         return $id;

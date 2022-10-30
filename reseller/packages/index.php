@@ -9,9 +9,11 @@ $ui = new UI();
 
 $ui->headerReseller();
 
+$userPackages = $tshp->userPackages->selectAll();
+
 ?>
 
-<h1 class="h2 m-2">Reseller Packages</h1>
+<h1 class="h2 m-2">User Packages</h1>
 <div class="card my-3">
     <div class="card-header">
         <h4 class="float-left align-middle mt-1 m-0">Packages List</h4>
@@ -23,28 +25,35 @@ $ui->headerReseller();
         </div>
     </div>
     <div class="card-body table-responsive">
-    <?php if(count($resellerPackages['results']) == 0){ ?>
-        <span class="text-center text-info d-block" data-toggle="modal" data-target="#packageModal" data-action="add">There are no Reseller Packages within this Web Hosting Panel yet... <a class="text-primary" style="cursor:pointer;text-decoration:underline;">Add a package here</a></span>
+    <?php if(count($userPackages) == 0){ ?>
+        <span class="text-center text-info d-block" data-toggle="modal" data-target="#packageModal" data-action="add">There are no user Packages within this Web Hosting Panel yet... <a class="text-primary" style="cursor:pointer;text-decoration:underline;">Add a package here</a></span>
     <?php }else{ ?>
         <table class="table table-hover table-sm text-center" style="margin:0;">
             <tr>
                 <th>Package Name</th>
                 <th>Bandwidth</th>
                 <th>Disk Usage</th>
-                <th>Users</th>
                 <th>Domains</th>
                 <th>Databases</th>
                 <th>Actions</th>
             </tr>
-            <!-- TODO: Add User packages -->
+            <?php foreach ($userPackages as $package) { ?>
+                <tr>
+                    <th><?php echo $package->Name; ?></th>
+                    <td><?php echo $package->MaxBandwidth; ?>MB</td>
+                    <td><?php echo $package->MaxDiskUsage; ?>MB</td>
+                    <td><?php echo $package->MaxDomains; ?></td>
+                    <td><?php echo $package->MaxDatabases; ?></td>
+                    <td>
+                        <button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button>
+                        <button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button>
+                    </td>
+                </tr>
+            <?php } ?>
         </table>
     <?php } ?>
     </div>
 </div>
-
-
-
-
 
 <div class="modal fade" id="packageModal" tabindex="-1" role="dialog" aria-labelledby="packageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">

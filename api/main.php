@@ -5,6 +5,7 @@ use API\Auth\Session;
 use API\Controllers\ResellerPackagesController;
 use API\DB;
 use API\Controllers\UserController;
+use API\Controllers\UserPackagesController;
 use API\Models\User;
 
 class TSHP {
@@ -14,6 +15,7 @@ class TSHP {
     public ?User $user;
     public UserController $users;
     public ResellerPackagesController $resellerPackages;
+    public UserPackagesController $userPackages;
     
 
     public function __construct(){
@@ -43,7 +45,7 @@ class TSHP {
 
         $this->users = new UserController();
         $this->resellerPackages = new ResellerPackagesController();
-
+        $this->userPackages = new UserPackagesController();
     }
 
     public static function getInstance(): self{
@@ -53,10 +55,6 @@ class TSHP {
         return self::$instance;
     }
 }
-
-
-
-
 
 // ======================= U S E R    I N T E R F A C E     C L A S S ======================= \\
 

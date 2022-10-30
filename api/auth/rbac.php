@@ -59,6 +59,12 @@ class RBAC {
         "delete" => [],
     ];
 
+    public static array $userPackages = [
+        "create" => [Role::Reseller],
+        "read" => [Role::Reseller, Role::User],
+        "update" => [Role::Reseller],
+        "delete" => [Role::Reseller],
+    ];
 }
 
 ?>

@@ -55,10 +55,6 @@ $resellerPackages = $tshp->resellerPackages->selectAll();
     </div>
 </div>
 
-
-
-
-
 <div class="modal fade" id="packageModal" tabindex="-1" role="dialog" aria-labelledby="packageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -122,7 +118,6 @@ $resellerPackages = $tshp->resellerPackages->selectAll();
                         </div>
                     </div>
                     
-
                     <div class="row w-100 m-0 mt-3">
                         <div class="col p-0 text-right">
                             <button type="button" class="btn btn-secondary text-right mx-1" data-dismiss="modal">Close</button>
