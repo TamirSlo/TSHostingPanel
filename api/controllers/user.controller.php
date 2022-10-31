@@ -60,7 +60,9 @@ class UserController {
             'Admin' => $userType->isAdmin(),
             'Reseller' => $userType->isReseller(),
             'ResellerID' => $tshp->user->UserID,
-            'ResellerPackageID' => $dbUser['ResellerPackageID'] ?? null]);
+            'ResellerPackageID' => $dbUser['ResellerPackageID'] ?? null,
+            'UserPackageID' => $dbUser['UserPackageID'] ?? null
+        ]);
         $user->UserType = $userType;
 
         $emailExists = false;

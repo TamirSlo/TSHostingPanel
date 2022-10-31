@@ -16,13 +16,15 @@ class User {
     public UserType $UserType;
     public ?int $ResellerID;
     public ?int $ResellerPackageID;
+    public ?int $UserPackageID;
     
     public ?self $ResellerUser;
     public ?ResellerPackage $ResellerPackage;
+    public ?UserPackage $UserPackage;
 
     public ?int $UserCount;
 
-    public function __construct(int $UserID, Name $Username, Email $Email, Name $FName, Name $LName, bool $Suspended, bool $Admin, bool $Reseller, ?int $ResellerID, ?int $ResellerPackageID, ?int $UserCount) {
+    public function __construct(int $UserID, Name $Username, Email $Email, Name $FName, Name $LName, bool $Suspended, bool $Admin, bool $Reseller, ?int $ResellerID, ?int $ResellerPackageID, ?int $UserPackageID, ?int $UserCount) {
         $this->UserID = $UserID;
         $this->Username = $Username;
         $this->Email = $Email;
@@ -33,6 +35,7 @@ class User {
         $this->Reseller = $Reseller;
         $this->ResellerID = $ResellerID;
         $this->ResellerPackageID = $ResellerPackageID;
+        $this->UserPackageID = $UserPackageID;
         $this->UserCount = $UserCount;
 
         $this->UserType = new UserType($Admin, $Reseller);
@@ -50,6 +53,7 @@ class User {
             boolval($dbUser['Reseller']),
             $dbUser['ResellerID'],
             $dbUser['ResellerPackageID'],
+            $dbUser['UserPackageID'],
             $dbUser['UserCount']
         );
 
@@ -59,6 +63,10 @@ class User {
 
         if($user->ResellerPackageID != null) {
             $user->ResellerPackage = ResellerPackage::selectByID($dbUser['ResellerPackageID']);
+        }
+
+        if($user->UserPackageID != null) {
+            $user->UserPackage = UserPackage::selectByID($dbUser['UserPackageID']);
         }
         
         return $user;

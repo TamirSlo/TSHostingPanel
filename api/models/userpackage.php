@@ -43,8 +43,9 @@ class UserPackage {
     }
 
     public static function selectAll(): UserPackages{
+        $tshp = \API\TSHP::getInstance();
         $db = \API\DB::getInstance();
-        $dbUserPackages = $db->getUserPackages();
+        $dbUserPackages = $db->getUserPackages($tshp->user->UserID);
         if(!$dbUserPackages['success']) {
             throw new \Exception('User packages not found');
         }

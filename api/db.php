@@ -196,7 +196,7 @@ class DB
     
     public function getAllUsers(){
         try {
-            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.Admin, a.Reseller, a.ResellerID, a.ResellerPackageID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a ORDER BY a.UserID ASC";
+            $query = "SELECT a.UserID, a.Username, a.Email, a.FName, a.LName, a.Suspended, a.Admin, a.Reseller, a.ResellerID, a.ResellerPackageID, a.UserPackageID, (SELECT COUNT(*) FROM users b WHERE a.UserID=b.ResellerID) as UserCount FROM users a ORDER BY a.UserID ASC";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
@@ -285,13 +285,13 @@ class DB
         return $this->checkResponse($st, "UPD", $s);
     }
 
-    public function getUserPackages(){
+    public function getUserPackages($resellerID){
         try {
-            $query = "SELECT * FROM packages_user";
+            $query = "SELECT * FROM packages_user WHERE ResellerID = ?";
             $st = $this->db->prepare($query);
             //$st->bindParam('?', $user);
             $st->setFetchMode(PDO::FETCH_ASSOC);
-            $st->execute();
+            $st->execute(array($resellerID));
         } catch (PDOException $e) {
             error_log('PDOException - ' . $e->getMessage(), 0);
         }

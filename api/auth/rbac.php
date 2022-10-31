@@ -4,6 +4,7 @@ namespace API\Auth;
 
 use API\Models\Role;
 use API\Models\User;
+use API\Models\UserPackage;
 use API\TSHP;
 
 class RBAC {
@@ -39,6 +40,31 @@ class RBAC {
     
             if($role == Role::User){
                 if($otherID != null && $tshp->user->UserID != $otherID){
+                    throw new \Exception("Unauthorized");
+                }
+            }
+        }
+
+        if($category == "resellerPackages"){
+            if($role == Role::Reseller){
+                if($otherID != null && $tshp->user->ResellerPackageID != $otherID){
+                    throw new \Exception("Unauthorized");
+                }
+            }
+        }
+
+        if($category == "userPackages"){
+            if($role == Role::Reseller){
+                if($otherID != null){
+                    $userPackage = UserPackage::selectByID($otherID);
+                    if($userPackage->ResellerID != $tshp->user->UserID){
+                        throw new \Exception("Unauthorized");
+                    }
+                }
+            }
+    
+            if($role == Role::User){
+                if($otherID != null && $tshp->user->UserPackageID != $otherID){
                     throw new \Exception("Unauthorized");
                 }
             }

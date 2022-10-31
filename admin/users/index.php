@@ -16,7 +16,7 @@ $resellerList = $allUsers->filterByType(UserType::Reseller());
 $userList = $allUsers->filterByType(UserType::User());
 
 $resellerPackages = $tshp->resellerPackages->selectAll();
-$userPackages = []; //TODO: implement user packages
+$userPackages = $tshp->userPackages->selectAll();
 ?>
 
 <h1 class="h2 m-2">Users</h1>
