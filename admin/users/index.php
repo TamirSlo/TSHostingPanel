@@ -131,15 +131,15 @@ $userPackages = $tshp->userPackages->selectAll();
                     <th>Actions</th>
                 </tr>
                 <?php foreach ($userList as $user) { ?>
-                    <tr>
+                    <tr id="user<?php echo $user->UserID; ?>">
                         <th><?php echo $user->UserID; ?></th>
                         <td><?php echo $user->FName; ?></td>
                         <td><?php echo $user->LName; ?></td>
                         <td><!--TODO: Add domains info -->-1</td>
                         <td><!--TODO: Add disk usage info -->-1</td>
                         <td>
-                            <button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button>
-                            <button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button>
+                            <button class="btn btn-info px-1 py-0 mx-1" data-toggle="modal" data-target="#userModal" data-action="edit" data-id="<?php echo $user->UserID; ?>">Edit</button>
+                            <button class="btn btn-danger px-1 py-0 mx-1 deleteUser" data-id="<?php echo $user->UserID; ?>">Delete</button>
                         </td>
                     </tr>
                 <?php } ?>

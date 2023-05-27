@@ -717,6 +717,95 @@ $(document).ready(function() {
         $('#confirmtoast'+temp_id+' .toast-body').html("Are you sure you want to delete this reseller?");
     });
 
+    $('#userModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var action = button.data('action');
+        var modal = $(this);
+    
+        if(action == "add"){
+            modal.find('.modal-title').text('Add a new User');
+        }else if(action == "edit"){
+            var id = button.data('id');
+            $.get("/api/admin/users/user.php?id="+id, function(data){
+                var result = JSON.parse(data);
+                if(result.success){
+                    modal.find('.modal-title').text('Edit User');
+                    modal.find('#uIdInput').val(result.data.UserID);
+                    modal.find('#uFNameInput').val(result.data.FName);
+                    modal.find('#uLNameInput').val(result.data.LName);
+                    modal.find('#uEmailInput').val(result.data.Email);
+                    modal.find('#uUserInput').val(result.data.Username);
+                    modal.find('#uPackageInput').val(result.data.UserPackageID);
+                    modal.find('#uResellerInput').val(result.data.ResellerID);
+                }else{
+                    var temp_id = generateErrorToast();
+                    $('#errortoast'+temp_id).toast('show');
+                    $('#errortoast'+temp_id+' .toast-body').html("Error: "+result.error);
+                }
+            }).fail(function(){
+                var temp_id = generateErrorToast();
+                $('#errortoast'+temp_id).toast('show');
+                $('#errortoast'+temp_id+' .toast-body').html("Error: Could not connect to server. Please try again later...");
+            });
+        }else{
+            modal.find('.modal-title').text('Error');
+            $(".modal-body").html("No action has been defined. Please refresh the page");
+            $(".modal-footer").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
+        }
+    });
+
+    $('#userModal').on('hidden.bs.modal', function (event) {
+        var modal = $(this);
+        var form = modal.find('form');
+        $('#uIDInput').val("");
+        form[0].reset();
+    });
+
+    $("button[type='submit']","#UserModalForm").click(function(e) {
+        e.preventDefault();
+        var form = $("#UserModalForm");
+        var data = $("#UserModalForm").serialize();
+        var me = $("button[type='submit']","#UserModalForm");
+
+        me.prop("disabled", true);
+        me.html('<span class="spinner-border spinner-border-sm mb-1 role="status" aria-hidden="true"></span> Checking details...');
+
+        $.post("/api/admin/users/user.php", data)
+            .done(function(response) {
+                result = JSON.parse(response);
+                if(result.success){
+                    var temp_id = generateSuccessToast();
+                    $('#successtoast' + temp_id).toast('show');
+                    $('#successtoast' + temp_id + ' .toast-body').html(result.message);
+                    let fName = $("#UserModalForm #uFNameInput").val();
+                    let lName = $("#UserModalForm #uLNameInput").val();
+                    if($("#user"+result.data.UserID).length == 0) $("#userTable tr:last").after('<tr> <th>'+result.data.UserID+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" disabled>Edit</button><button class="btn btn-danger px-1 py-0 mx-1" disabled>Delete</button></td> </tr>');
+                    $("#user"+result.data.UserID).html('<th>'+result.data.UserID+'</th> <td>'+fName+'</td> <td>'+lName+'</td> <td>0</td> <td>0.00MB</td> <td><button class="btn btn-info px-1 py-0 mx-1" data-toggle="modal" data-target="#userModal" data-action="edit" data-id="'+result.data.UserID+'">Edit</button><button class="btn btn-danger px-1 py-0 mx-1 deleteUser" data-id="'+result.data.UserID+'">Delete</button></td>');
+                    $('#userModal').modal('hide');
+                    $("#UserModalForm")[0].reset();
+                }else{
+                    var temp_id = generateErrorToast();
+                    $('#errortoast' + temp_id).toast('show');
+                    $('#errortoast' + temp_id + ' .toast-body').html(data.error);
+                }
+            }).fail(function(){
+                var temp_id = generateErrorToast();
+                $('#errortoast' + temp_id).toast('show');
+                $('#errortoast' + temp_id + ' .toast-body').html("Could not connect to server. Please try again later...");
+            }).always(function(){
+                me.prop("disabled", false);
+                me.html("Save Changes");
+            })
+    });
+
+    $('.deleteUser').click(function(e){
+        e.preventDefault();
+        var id = $(this).data('id');
+        var temp_id = generateConfirmToast('deleteUser('+id+')');
+        $('#confirmtoast'+temp_id).toast('show');
+        $('#confirmtoast'+temp_id+' .toast-body').html("Are you sure you want to delete this user?");
+    });
+
     $('#packageModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var action = button.data('action');
@@ -812,6 +901,26 @@ function deleteReseller(id){
             $('#successtoast'+temp_id).toast('show');
             $('#successtoast'+temp_id+' .toast-body').html("Reseller deleted successfully");
             $('#reseller'+id).remove();
+        }else{
+            var temp_id = generateErrorToast();
+            $('#errortoast'+temp_id).toast('show');
+            $('#errortoast'+temp_id+' .toast-body').html("Error: "+data.error);
+        }
+    }).fail(function(){
+        var temp_id = generateErrorToast();
+        $('#errortoast'+temp_id).toast('show');
+        $('#errortoast'+temp_id+' .toast-body').html("Error: Could not connect to server. Please try again later...");
+    });
+}
+
+function deleteUser(id){
+    $.post("/api/admin/users/user.php", {delete: id}, function(data){
+        var data = JSON.parse(data);
+        if(data.success){
+            var temp_id = generateSuccessToast();
+            $('#successtoast'+temp_id).toast('show');
+            $('#successtoast'+temp_id+' .toast-body').html("User deleted successfully");
+            $('#user'+id).remove();
         }else{
             var temp_id = generateErrorToast();
             $('#errortoast'+temp_id).toast('show');
